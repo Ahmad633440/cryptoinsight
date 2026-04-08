@@ -1,36 +1,164 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 CryptoInsight
 
-## Getting Started
+A data-driven web platform that helps users understand current cryptocurrency market news by comparing it with historically similar events and showing real market outcomes.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 📌 Overview
+
+CryptoInsight analyzes real-time crypto news and matches it with similar past events using semantic search (embeddings). Instead of predicting the future, it provides historical context and actual price reactions to help users make informed decisions.
+
+---
+
+## 🎯 Problem
+
+Crypto users often react emotionally to news without context. Traditional platforms:
+
+* Show raw news
+* Require manual research
+* Provide no historical comparison
+
+---
+
+## 💡 Solution
+
+CryptoInsight:
+
+* Finds similar past events automatically
+* Shows actual price movements after those events
+* Provides structured comparison insights
+
+---
+
+## ⚙️ How It Works
+
+1. Fetch real-time crypto news via APIs
+2. Convert news into embeddings (vector representation)
+3. Store data in MongoDB
+4. When new news arrives:
+
+   * Generate embedding
+   * Perform vector similarity search
+5. Retrieve similar past events
+6. Display:
+
+   * Past event details
+   * Price changes (24h / few days)
+   * AI-generated comparison summary
+
+---
+
+## 🧠 Core Features
+
+* 🔍 Semantic Search (context-based matching)
+* 📊 Historical Price Analysis
+* 🤖 AI-powered Comparison Summaries
+* 🧾 Source Transparency (real news links)
+* ⚠️ No Predictions (data-driven insights only)
+
+---
+
+## 🏗️ Tech Stack
+
+### Frontend
+
+* Next.js
+* React
+* Tailwind CSS
+
+### Backend
+
+* Node.js
+* Express.js
+
+### Database
+
+* MongoDB (with vector search)
+
+### AI / APIs
+
+* Embeddings API (e.g., Gemini / OpenAI)
+* Coin Gecko APIs
+* Crypto Panic APIs
+
+---
+
+## 📊 Data Model (Simplified)
+
+* title
+* description
+* coin
+* date
+* embedding
+* priceBefore
+* priceAfter
+* priceChangePercent
+* source
+
+---
+
+## 🚧 Limitations
+
+* Similarity is not always perfect
+* Market behavior is unpredictable
+* Results depend on data quality
+* System provides insights, not financial advice
+
+---
+
+## 🔥 Future Improvements
+
+* Better event classification
+* More historical data
+* Confidence scoring system
+* User personalization
+
+---
+
+## 🧪 Setup Instructions
+
+### 1. Clone the repo
+
+```
+git clone https://github.com/your-username/cryptoInsight.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install dependencies
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+cd client && npm install
+cd ../server && npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. Setup environment variables
 
-## Learn More
+Create `.env` file in server:
 
-To learn more about Next.js, take a look at the following resources:
+```
+MONGO_URI=
+API_KEYS=
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 4. Run project
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+# backend
+cd server
+npm run dev
 
-## Deploy on Vercel
+# frontend
+cd client
+npm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📌 Key Principle
+
+> We don’t predict the market. We show what happened in similar situations so users can think better.
+
+---
+
+## 📜 License
+
+This project is for educational purposes.
