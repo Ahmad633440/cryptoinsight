@@ -40,17 +40,6 @@ function ChangeCell({ value }: { value: number }) {
   );
 }
 
-function SparklineSVG({ positive }: { positive: boolean }) {
-  const d = positive
-    ? "M0,12 C4,11 8,9 12,10 C16,11 20,6 24,4 C28,2 32,3 36,1"
-    : "M0,2 C4,3 8,5 12,4 C16,3 20,8 24,10 C28,12 32,11 36,13";
-  return (
-    <svg viewBox="0 0 36 14" className="w-[72px] h-[28px]" fill="none">
-      <path d={d} stroke={positive ? "#10b981" : "#ef4444"} strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 const TABLE_HEADERS = [
   { label: "#", align: "text-left" },
   { label: "Name", align: "text-left" },
@@ -60,20 +49,19 @@ const TABLE_HEADERS = [
   { label: "7d %", align: "text-right" },
   { label: "Market Cap", align: "text-right" },
   { label: "Volume (24h)", align: "text-right" },
-  { label: "Last 7d", align: "text-right" },
 ];
 
 export default function MarketTable({ data }: MarketTableProps) {
   return (
-    <div className="overflow-x-auto rounded-2xl border border-zinc-800/60 bg-zinc-900/30">
-      <table className="w-full min-w-[900px]">
+    <div className="overflow-x-auto rounded-3xl border border-zinc-800/40 bg-zinc-900/20 backdrop-blur-md">
+      <table className="w-full min-w-[800px]">
         {/* ── Head ─────────────────────────── */}
         <thead>
-          <tr className="border-b border-zinc-800/60">
+          <tr className="border-b border-zinc-800/40">
             {TABLE_HEADERS.map((h) => (
               <th
                 key={h.label}
-                className={`px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-zinc-500 ${h.align} first:pl-6 last:pr-6`}
+                className={`px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500 ${h.align} first:pl-8 last:pr-8`}
               >
                 {h.label}
               </th>
@@ -87,60 +75,58 @@ export default function MarketTable({ data }: MarketTableProps) {
             <tr
               key={coin.symbol}
               className={`
-                border-b border-zinc-800/30 hover:bg-zinc-800/30 transition-colors cursor-pointer
-                animate-fade-up delay-${i + 1}
+                border-b border-zinc-800/10 hover:bg-zinc-800/20 transition-all cursor-pointer group
+                animate-fade-up delay-${(i % 10) + 1}
               `}
             >
               {/* Rank */}
-              <td className="px-4 py-4 pl-6">
-                <span className="text-xs font-mono text-zinc-600">{coin.rank}</span>
+              <td className="px-6 py-5 pl-8">
+                <span className="text-xs font-bold text-zinc-600 group-hover:text-zinc-400 transition-colors">
+                  {coin.rank.toString().padStart(2, "0")}
+                </span>
               </td>
 
               {/* Name */}
-              <td className="px-4 py-4">
-                <div className="flex items-center gap-3">
+              <td className="px-6 py-5">
+                <div className="flex items-center gap-4">
                   <div
-                    className="h-8 w-8 rounded-lg flex items-center justify-center text-[10px] font-bold text-white shrink-0"
-                    style={{ background: `linear-gradient(135deg, ${coin.color}, ${coin.color}99)` }}
+                    className="h-10 w-10 rounded-xl flex items-center justify-center text-[10px] font-black text-white shrink-0 shadow-lg"
+                    style={{ 
+                      background: `linear-gradient(135deg, ${coin.color}, ${coin.color}99)`,
+                      boxShadow: `0 4px 12px ${coin.color}20`
+                    }}
                   >
                     {coin.symbol.slice(0, 2).toUpperCase()}
                   </div>
-                  <div>
-                    <span className="text-sm font-semibold text-white">{coin.name}</span>
-                    <span className="ml-2 text-xs text-zinc-500 uppercase">{coin.symbol}</span>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors">
+                      {coin.name}
+                    </span>
+                    <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-tighter">
+                      {coin.symbol}
+                    </span>
                   </div>
                 </div>
               </td>
 
               {/* Price */}
-              <td className="px-4 py-4 text-right">
-                <span className="text-sm font-semibold text-white">{formatPrice(coin.price)}</span>
+              <td className="px-6 py-5 text-right">
+                <span className="text-sm font-black text-white">{formatPrice(coin.price)}</span>
               </td>
 
-              {/* 1h */}
-              <td className="px-4 py-4 text-right"><ChangeCell value={coin.change1h} /></td>
-
-              {/* 24h */}
-              <td className="px-4 py-4 text-right"><ChangeCell value={coin.change24h} /></td>
-
-              {/* 7d */}
-              <td className="px-4 py-4 text-right"><ChangeCell value={coin.change7d} /></td>
+              {/* Changes */}
+              <td className="px-6 py-5 text-right"><ChangeCell value={coin.change1h} /></td>
+              <td className="px-6 py-5 text-right"><ChangeCell value={coin.change24h} /></td>
+              <td className="px-6 py-5 text-right"><ChangeCell value={coin.change7d} /></td>
 
               {/* Market Cap */}
-              <td className="px-4 py-4 text-right">
-                <span className="text-sm text-zinc-300">{formatCompact(coin.marketCap)}</span>
+              <td className="px-6 py-5 text-right">
+                <span className="text-sm font-bold text-zinc-300">{formatCompact(coin.marketCap)}</span>
               </td>
 
               {/* Volume */}
-              <td className="px-4 py-4 text-right">
-                <span className="text-sm text-zinc-400">{formatCompact(coin.volume24h)}</span>
-              </td>
-
-              {/* Sparkline */}
-              <td className="px-4 py-4 pr-6 text-right">
-                <div className="flex justify-end">
-                  <SparklineSVG positive={coin.change7d >= 0} />
-                </div>
+              <td className="px-6 py-5 text-right pr-8">
+                <span className="text-xs font-medium text-zinc-500">{formatCompact(coin.volume24h)}</span>
               </td>
             </tr>
           ))}
@@ -148,12 +134,17 @@ export default function MarketTable({ data }: MarketTableProps) {
       </table>
 
       {/* ── Footer ─────────────────────────── */}
-      <div className="flex items-center justify-between px-6 py-3 border-t border-zinc-800/40">
-        <span className="text-xs text-zinc-600">Showing {data.length} coins</span>
-        <div className="flex items-center gap-1">
-          <Badge variant="zinc">CoinGecko API</Badge>
+      <div className="flex items-center justify-between px-8 py-4 border-t border-zinc-800/40 bg-zinc-950/20">
+        <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">
+          Displaying {data.length} assets
+        </span>
+        <div className="flex items-center gap-2">
+          <Badge variant="zinc" className="text-[9px] font-black uppercase tracking-tighter bg-zinc-800/40 border-zinc-700/30">
+            Real-time Source
+          </Badge>
         </div>
       </div>
     </div>
   );
 }
+
