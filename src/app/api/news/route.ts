@@ -1,5 +1,5 @@
 import { connectDB } from "@/lib/db";
-import News from "@/models/pastNews";
+import News from "@/models/news";
 import { NextResponse } from "next/server";
 
 
@@ -7,8 +7,10 @@ import { NextResponse } from "next/server";
 export async function GET() {
     try {
         await connectDB();
+        console.log('[DEBUG] DB connected in /api/news');
 
         const news = await News.find({}).sort({ createdAt: -1 });
+        console.log('[DEBUG] Found articles:', news.length);
 
         return NextResponse.json({
             success: true,
@@ -16,7 +18,7 @@ export async function GET() {
         });
 
     } catch (error) {
-        console.error("Error fetching news:", error);
+        console.error('[DEBUG] Error fetching news:', error);
         return NextResponse.json({
             success: false,
             message: "Failed to fetch news",

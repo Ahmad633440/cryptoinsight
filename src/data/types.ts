@@ -15,3 +15,14 @@ export interface NewsArticle {
   sourceUrl: string;
   featured?: boolean;
 }
+
+
+export interface NewsType {
+  title: string;
+  content?: string;
+  source: string;
+  publishedAt: Date;
+  url: string;
+  coin?: string;
+  sentiment?: string;
+}

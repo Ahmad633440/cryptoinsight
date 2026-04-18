@@ -2,25 +2,39 @@ import mongoose from "mongoose";
 
 const NewsSchema = new mongoose.Schema({
   
-title: String,
-description: String,
+title: {
+    type: String,
+    required: true,
+},
+content: String,
 coin: String,
 category: String,
+source: String,
 
-date:{
-   type: Date,
+sentiment: String,
+
+publishedAt: Date,
+url: {
+    type: String, 
+    required: true,
+    unique: true,
 },
 
 embedding: {
     type: [Number], //vector
+    default: undefined,
 },
+isEmbedded: {
+    type: Boolean,
+    default: false,
+},
+
 
 priceBefore: Number,
 priceAfter: Number,
 priceChangePercent: Number,
 impactDurationHours: Number, // 24h, 48h, etc
 
-source: String,
 
 },{timestamps: true});
 
