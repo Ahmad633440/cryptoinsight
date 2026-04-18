@@ -17,11 +17,16 @@ publishedAt: Date,
 url: {
     type: String, 
     required: true,
-    // unique: true,
+    unique: true,
 },
 
 embedding: {
     type: [Number], //vector
+    default: undefined,
+},
+isEmbedded: {
+    type: Boolean,
+    default: false,
 },
 
 

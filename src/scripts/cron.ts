@@ -1,7 +1,7 @@
 
-
+import { syncNews } from '@/controllers/fetchNews';
 import cron from 'node-cron';
-import { syncNews } from '@/lib/fetchNews';
+
 
 // Run every 30 minutes
 cron.schedule('*/30 * * * *', async () => {

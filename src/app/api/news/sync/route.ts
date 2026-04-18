@@ -1,10 +1,12 @@
-import { syncNews } from '@/lib/fetchNews';
+
+import { syncNews } from '@/controllers/fetchNews';
 import { NextResponse } from 'next/server';
 
 export async function POST() {
     try {
         console.log('Manual news sync triggered...');
         const result = await syncNews();
+        console.log('Sync result:', result);
 
         return NextResponse.json(
             { 
