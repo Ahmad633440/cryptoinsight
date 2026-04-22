@@ -26,3 +26,28 @@ export interface NewsType {
   coin?: string;
   sentiment?: string;
 }
+
+export interface CoinQuote {
+  id: string;
+  symbol: string;
+  name: string;
+  price: number;
+  marketCap: number;
+  volume24h: number;
+  percentChange24h: number;
+  lastUpdated: string;
+}
+
+export interface DetectedCoin {
+  symbol: string;
+  name: string;
+  coinId: string;
+  confidence: "high" | "medium" | "low";
+}
+
+export interface EnrichmentResult {
+  success: number;
+  failed: number;
+  skipped: number;
+  errors: string[];
+}
