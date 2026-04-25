@@ -11,7 +11,7 @@ export default function HomePage() {
       <section className="w-full flex flex-col items-center justify-center py-24 px-6 text-center animate-fade-up">
         <div className="mb-8">
           <Badge variant="yellow" className="py-1.5 px-4 rounded-full border-yellow-500/30">
-            ⚠ Educational Platform Only
+            ⚠ Educational Platform qwerty
           </Badge>
         </div>
         
