@@ -64,3 +64,11 @@ export interface NewsPayload {
   category?: string;
   sentiment?: string;
 }
+
+
+export interface PriceUpdateResult {
+  success: number;
+  failed: number;
+  skipped: number;
+  errors: string[];
+}

@@ -16,8 +16,13 @@ const callGeminiEmbedding = async (text: string): Promise<number[]> => {
     throw new Error("Gemini embedding API key is not configured.");
   }
 
+  console.debug("Gemini embedding request:", {
+    keyLoaded: !!GEMINI_API_KEY,
+    textLength: text.length,
+  });
+
   const response = await axios.post(
-    `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${GEMINI_API_KEY}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/embedding-001:embedContent?key=${GEMINI_API_KEY}`,
     {
       content: {
         parts: [{ text }],

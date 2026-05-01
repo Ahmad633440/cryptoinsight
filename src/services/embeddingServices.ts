@@ -30,6 +30,7 @@ export const createNewsWithEmbedding = async (
     try {
       embedding = await generateEmbedding(textForEmbedding);
       isEmbedded = true;
+      console.log("Embedding generated successfully for news:", payload.url);
     } catch (error) {
       console.error("Embedding generation failed for news:", {
         url: payload.url,
