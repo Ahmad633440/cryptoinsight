@@ -22,7 +22,7 @@ const callGeminiEmbedding = async (text: string): Promise<number[]> => {
   });
 
   const response = await axios.post(
-    `https://generativelanguage.googleapis.com/v1beta/models/embedding-001:embedContent?key=${GEMINI_API_KEY}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=${GEMINI_API_KEY}`,
     {
       content: {
         parts: [{ text }],
