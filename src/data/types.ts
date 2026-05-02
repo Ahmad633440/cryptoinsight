@@ -51,3 +51,24 @@ export interface EnrichmentResult {
   skipped: number;
   errors: string[];
 }
+
+
+export interface NewsPayload {
+  title: string;
+  content?: string;
+  description?: string;
+  source: string;
+  url: string;
+  publishedAt: Date;
+  coin?: string;
+  category?: string;
+  sentiment?: string;
+}
+
+
+export interface PriceUpdateResult {
+  success: number;
+  failed: number;
+  skipped: number;
+  errors: string[];
+}

@@ -1,7 +1,6 @@
 import axios from 'axios';
-import News from '@/models/news';
-import type { NewsType } from '@/data/types';
 import { connectDB } from '@/lib/db';
+import { createNewsWithEmbedding } from '@/services/embeddingServices';
 
 const NEWSDATA_API_URL = 'https://newsdata.io/api/1/news';
 
@@ -65,20 +64,19 @@ export const syncNews = async () => {
 
         for (const article of newsArticles) {
             try {
-                // Check if article already exists
-                const existingArticle = await News.findOne({ url: article.url });
-                
-                if (!existingArticle) {
-                    await News.create({
-                        title: article.title,
-                        content: article.content,
-                        source: article.source,
-                        publishedAt: article.publishedAt,
-                        url: article.url,
-                        coin: article.coin,
-                        sentiment: 'Neutral',
-                    });
+                const result = await createNewsWithEmbedding({
+                    title: article.title,
+                    content: article.content,
+                    source: article.source,
+                    publishedAt: article.publishedAt,
+                    url: article.url,
+                    coin: article.coin,
+                    sentiment: 'Neutral',
+                });
+
+                if (result.created) {
                     synced++;
+                    console.log('[DEBUG] News saved with embedding:', article.url, 'embedded=', result.embedded);
                 } else {
                     console.log('[DEBUG] Duplicate skipped:', article.url);
                 }
