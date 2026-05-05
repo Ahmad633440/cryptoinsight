@@ -72,3 +72,16 @@ export interface PriceUpdateResult {
   skipped: number;
   errors: string[];
 }
+
+/**
+ * Interface for similar news results
+ */
+export interface SimilarNewsResult {
+  _id: string;
+  title: string;
+  content?: string;
+  coin?: string;
+  source: string;
+  publishedAt: Date;
+  score: number; // Vector similarity score (higher = more similar)
+}
