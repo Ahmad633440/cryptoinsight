@@ -20,7 +20,7 @@ GEMINI_KEY = os.getenv("GEMINI_KEY")
 GROQ_KEY = os.getenv("GROQ_KEY")
 
 mongo_client = MongoClient(MONGODB_URL)
-collection = mongo_client["cryptodb"]["historical_events"]
+collection = mongo_client["cryptoinsight"]["news"]
 
 embeddings = GoogleGenerativeAIEmbeddings(
     model="gemini-embedding-001",
