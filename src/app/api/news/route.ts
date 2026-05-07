@@ -1,4 +1,5 @@
 import { connectDB } from "@/lib/db";
+import { createNewsWithEmbedding } from "@/services/embeddingServices";
 import News from "@/models/news";
 import { NextResponse } from "next/server";
 
@@ -36,7 +37,7 @@ export async function POST(req: Request) {
         const body = await req.json();
 
         // Basic validation
-        const requiredFields = ['title', 'description', 'coin', 'source'];
+        const requiredFields = ['title', 'coin', 'source', 'url'];
         for (const field of requiredFields) {
             if (!body[field]) {
                 return NextResponse.json({
@@ -46,12 +47,29 @@ export async function POST(req: Request) {
             }
         }
 
-        const news = await News.create(body);
+        if (!body.content && !body.description) {
+            return NextResponse.json({
+                success: false,
+                message: 'Missing required field: content or description'
+            }, { status: 400 });
+        }
+
+        const { news, created, embedded } = await createNewsWithEmbedding({
+            title: body.title,
+            content: body.content || body.description,
+            source: body.source,
+            publishedAt: new Date(body.publishedAt || Date.now()),
+            url: body.url,
+            coin: body.coin,
+            category: body.category,
+            sentiment: body.sentiment || 'Neutral',
+        });
 
         return NextResponse.json({
             success: true,
-            message: "News stored successfully",
+            message: created ? "News stored successfully" : "News already exists",
             data: news,
+            embedded,
         });
 
     } catch (error) {

@@ -11,13 +11,9 @@
 
 import News from "@/models/news";
 import { getQuoteBySymbol } from "@/lib/coinMarketCap";
+import { PriceUpdateResult } from "@/data/types";
 
-export interface PriceUpdateResult {
-  success: number;
-  failed: number;
-  skipped: number;
-  errors: string[];
-}
+
 
 /**
  * Update price for a single news article
