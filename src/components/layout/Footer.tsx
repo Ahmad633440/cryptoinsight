@@ -4,7 +4,7 @@ const FOOTER_LINKS = {
   Product: [
     { label: "Dashboard", href: "/" },
     { label: "AI News", href: "/news" },
-    { label: "Risk Analysis", href: "/risk" },
+
     { label: "AI Chatbot", href: "/chatbot" },
   ],
   Resources: [
@@ -40,7 +40,7 @@ export default function Footer() {
               <span className="font-semibold text-white">CryptoInsight</span>
             </div>
             <p className="text-sm text-zinc-500 leading-relaxed max-w-xs">
-              AI-powered crypto analysis platform. Real-time data, news sentiment, risk scoring &amp; more.
+              AI-powered crypto analysis platform. Real-time data, news sentiment, and market intelligence.
             </p>
           </div>
 

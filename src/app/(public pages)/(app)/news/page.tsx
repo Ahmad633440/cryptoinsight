@@ -1,108 +1,134 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import NewsSlider from "@/components/news/NewsSlider";
-import NewsFilters from "@/components/news/NewsFilters";
-import Card from "@/components/ui/Card";
-import { NEWS_ARTICLES } from "@/data/news";
+import React, { useState, useEffect } from "react";
+import Badge from "@/components/ui/Badge";
+import IntelligenceNewsCard from "@/components/news/IntelligenceNewsCard";
+import NewsPagination from "@/components/news/NewsPagination";
+import NewsContentModal from "@/components/news/NewsContentModal";
+import { EnrichedNewsArticle } from "@/data/types";
 
-export default function NewsPage() {
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
+export default function NewsIntelligencePage() {
+  const [news, setNews] = useState<EnrichedNewsArticle[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [expandedArticle, setExpandedArticle] = useState<EnrichedNewsArticle | null>(null);
+  const itemsPerPage = 6;
 
-  const filteredArticles = useMemo(() => {
-    return NEWS_ARTICLES.filter(article => {
-      const matchesCategory = activeCategory === "All" || article.category === activeCategory;
-      const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           article.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           article.source.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
-    });
-  }, [activeCategory, searchQuery]);
+  useEffect(() => {
+    fetchNews(currentPage);
+  }, [currentPage]);
+
+  const fetchNews = async (page: number) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/news/enriched?limit=${itemsPerPage}&page=${page}`);
+      const result = await response.json();
+      if (result.success) {
+        setNews(result.data);
+        setTotalItems(result.meta.total || 0);
+      } else {
+        setError(result.message || "Failed to load news");
+      }
+    } catch (err) {
+      setError("An error occurred while fetching news");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   return (
-    <div className="px-6 py-8 space-y-12 max-w-5xl mx-auto min-h-[80vh] flex flex-col justify-center">
-      
-      {/* Header */}
-      <section className="text-center space-y-4 animate-fade-in">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-          </span>
-          Live Market Updates
+    <div className="max-w-7xl mx-auto px-6 py-12 space-y-12">
+      {/* Page Header */}
+      <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-zinc-800 pb-12">
+        <div className="space-y-4">
+          <Badge variant="blue" className="px-3 py-1 text-[10px] uppercase font-bold tracking-widest">
+            Intelligence AI
+          </Badge>
+          <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter">
+            News <span className="text-gradient">Insights</span>
+          </h1>
+          <p className="text-zinc-500 max-w-xl text-lg font-medium leading-relaxed">
+            Direct access to institutional-grade crypto intelligence, simplified for real-time analysis.
+          </p>
         </div>
-        <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
-          Crypto Insights <span className="text-blue-500">News</span>
-        </h1>
-        <p className="text-zinc-500 text-sm md:text-base max-w-lg mx-auto leading-relaxed">
-          The most important headlines in the crypto world, simplified for you. 
-          Stay informed with trusted data from real-time sources.
-        </p>
-      </section>
+        
+        <div className="flex items-center gap-4">
+          <div className="text-right hidden md:block">
+            <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-[0.2em] mb-1">Total Signals</p>
+            <p className="text-sm text-white font-mono bg-zinc-900 px-3 py-1 rounded-md border border-zinc-800">
+              {totalItems}
+            </p>
+          </div>
+          <button 
+            onClick={() => fetchNews(currentPage)}
+            className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white transition-all hover:bg-zinc-800 active:scale-95"
+            title="Refresh news"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+              <path d="M21 3v5h-5" />
+            </svg>
+          </button>
+        </div>
+      </header>
 
-      {/* Main News Slider */}
-      <section className="animate-fade-up">
-        {filteredArticles.length > 0 ? (
-          <NewsSlider articles={filteredArticles} />
-        ) : (
-          <div className="py-20 flex flex-col items-center justify-center text-center space-y-4 bg-zinc-900/40 rounded-3xl border border-zinc-800/50 backdrop-blur-sm">
-            <div className="p-4 rounded-full bg-zinc-900/50 border border-zinc-800/60 text-zinc-500">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
+      {/* Main Content Area */}
+      <main>
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="h-96 rounded-3xl bg-zinc-900/40 animate-pulse border border-zinc-800/50" />
+            ))}
+          </div>
+        ) : error ? (
+          <div className="py-24 text-center space-y-6 bg-red-500/5 border border-red-500/10 rounded-[2rem] animate-fade-in">
+            <div className="flex justify-center">
+              <div className="p-4 rounded-full bg-red-500/10 text-red-500">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+              </div>
             </div>
-            <div>
-              <h3 className="text-lg font-semibold text-white">No headlines found</h3>
-              <p className="text-zinc-500 text-sm max-w-xs mx-auto">
-                We couldn&apos;t find any news matching your search.
-              </p>
-            </div>
+            <p className="text-red-400 font-bold text-lg">{error}</p>
             <button 
-              onClick={() => {setActiveCategory("All"); setSearchQuery("");}}
-              className="text-blue-400 text-sm font-semibold hover:text-blue-300 transition-colors"
+              onClick={() => fetchNews(currentPage)} 
+              className="px-6 py-2 rounded-xl bg-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-700 transition-all font-bold text-sm"
             >
-              Show all news
+              Retry Connection
             </button>
           </div>
-        )}
-      </section>
-
-      {/* Simplified Filters - Moved below for a cleaner entry */}
-      <div className="max-w-4xl mx-auto w-full">
-        <NewsFilters 
-          activeCategory={activeCategory}
-          onCategoryChange={setActiveCategory}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-        />
-      </div>
-
-      {/* Newsletter */}
-      <section className="animate-fade-up pt-8">
-        <Card className="relative overflow-hidden p-8 border border-zinc-800/50 bg-zinc-900/20 backdrop-blur-md rounded-3xl">
-          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="text-center md:text-left space-y-2">
-              <h2 className="text-xl font-bold text-white">Market Briefing</h2>
-              <p className="text-zinc-500 text-sm">
-                Get the top 3 stories delivered to your inbox every morning.
-              </p>
+        ) : (
+          <div className="space-y-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {news.map((article) => (
+                <IntelligenceNewsCard 
+                  key={article._id} 
+                  article={article} 
+                  onExpand={setExpandedArticle} 
+                />
+              ))}
             </div>
-            
-            <form className="flex flex-col sm:flex-row gap-3 w-full max-w-md" onSubmit={(e) => e.preventDefault()}>
-              <input 
-                type="email" 
-                placeholder="email@example.com" 
-                className="flex-grow bg-zinc-950/50 border border-zinc-800/50 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
-              />
-              <button className="bg-blue-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-blue-500 transition-all">
-                Join Now
-              </button>
-            </form>
-          </div>
-        </Card>
-      </section>
 
+            <NewsPagination 
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </div>
+        )}
+      </main>
+
+      {/* Modals */}
+      {expandedArticle && (
+        <NewsContentModal 
+          article={expandedArticle} 
+          onClose={() => setExpandedArticle(null)} 
+        />
+      )}
     </div>
   );
 }

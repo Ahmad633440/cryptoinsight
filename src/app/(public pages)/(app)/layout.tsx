@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Sidebar from "@/components/layout/Sidebar";
+import Footer from "@/components/layout/Footer";
 
 export default function AppLayout({
   children,
@@ -24,6 +25,7 @@ export default function AppLayout({
         `}
       >
         {children}
+        <Footer />
       </div>
     </>
   );
