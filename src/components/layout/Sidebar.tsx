@@ -35,15 +35,7 @@ const NAV_ITEMS = [
       </svg>
     ),
   },
-  {
-    label: "Risk",
-    href: "/risk",
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-      </svg>
-    ),
-  },
+
   {
     label: "Chatbot",
     href: "/chatbot",
@@ -144,32 +136,34 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
         })}
       </nav>
 
-      {/* ── Bottom Card ─────────────────── */}
+      {/* ── Education Tip ─────────────────── */}
       {!collapsed && (
-        <div className="p-4">
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4">
+        <div className="p-4 mt-auto">
+          <div className="rounded-xl border border-indigo-500/20 bg-indigo-500/5 p-4">
             <div className="flex items-center gap-2 mb-2">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-              </svg>
-              <span className="text-xs font-semibold text-white">Pro Upgrade</span>
+              <div className="h-5 w-5 rounded-full bg-indigo-500/20 flex items-center justify-center">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 16h.01" />
+                  <path d="M12 8v4" />
+                  <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z" />
+                </svg>
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400">Education Tip</span>
             </div>
-            <p className="text-[11px] text-zinc-500 leading-relaxed mb-3">
-              Unlock AI insights, real-time alerts &amp; advanced analytics.
+            <p className="text-[11px] text-zinc-400 leading-relaxed italic">
+              &quot;Not your keys, not your coins.&quot; Always use non-custodial wallets to truly own your assets.
             </p>
-            <button className="w-full py-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 text-xs font-semibold text-white hover:opacity-90 transition-opacity">
-              Upgrade Now
-            </button>
           </div>
         </div>
       )}
 
       {/* Collapsed: small icon at bottom */}
       {collapsed && (
-        <div className="p-3 flex justify-center">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+        <div className="p-3 flex justify-center mt-auto">
+          <div className="h-10 w-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 16h.01" /><path d="M12 8v4" />
+              <circle cx="12" cy="12" r="10" />
             </svg>
           </div>
         </div>

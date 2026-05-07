@@ -11,10 +11,10 @@ export default function ChatbotPage() {
       {/* Page Header */}
       <div className="text-center mb-10 animate-fade-up">
         <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">
-          AI <span className="text-gradient">Market Analyst</span>
+          AI <span className="text-gradient">Crypto Assistant</span>
         </h1>
         <p className="text-zinc-400 text-base md:text-lg max-w-2xl mx-auto font-medium">
-          Leverage real-time data and advanced algorithms to get instant answers about the crypto ecosystem.
+          Ask questions and get simple, clear explanations about the world of cryptocurrency.
         </p>
       </div>
 

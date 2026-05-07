@@ -12,10 +12,10 @@ interface Message {
 }
 
 const SUGGESTED_QUESTIONS = [
-  "What is the current market sentiment?",
-  "Analyze Bitcoin's performance today",
-  "Which altcoins are trending?",
-  "What are the top gainers this week?",
+  "What is Bitcoin and how does it work?",
+  "How do I start investing in crypto safely?",
+  "What is a crypto wallet?",
+  "Why are crypto prices so volatile?",
 ];
 
 export default function ChatWindow() {
@@ -156,9 +156,9 @@ export default function ChatWindow() {
                 />
               </svg>
             </div>
-            <h4 className="text-xl font-bold text-zinc-100 mb-2">How can I help you?</h4>
+            <h4 className="text-xl font-bold text-zinc-100 mb-2">How can I help you today?</h4>
             <p className="text-sm text-zinc-400 max-w-xs mx-auto mb-8">
-              Ask me about market trends, technical analysis, or get real-time insights on your favorite coins.
+              Ask me anything about crypto! I&apos;m here to help you understand the basics in simple terms.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-md">
               {SUGGESTED_QUESTIONS.map((q, i) => (

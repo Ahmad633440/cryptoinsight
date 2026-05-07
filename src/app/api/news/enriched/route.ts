@@ -18,6 +18,8 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get("limit") || "20");
+    const page = parseInt(searchParams.get("page") || "1");
+    const skip = (page - 1) * limit;
     const coin = searchParams.get("coin");
     const includeLive = searchParams.get("live") !== "false"; // Default: include live data
 
@@ -32,8 +34,11 @@ export async function GET(request: Request) {
     // Fetch stored news
     const newsArticles = await News.find(query)
       .sort({ publishedAt: -1 })
+      .skip(skip)
       .limit(limit)
       .lean();
+
+    const totalCount = await News.countDocuments(query);
 
     // If live data not requested, return stored data only
     if (!includeLive) {
@@ -41,7 +46,9 @@ export async function GET(request: Request) {
         success: true,
         data: newsArticles,
         meta: {
-          total: newsArticles.length,
+          total: totalCount,
+          page,
+          limit,
           liveData: false,
         },
       });
@@ -74,12 +81,12 @@ export async function GET(request: Request) {
 
       const live = article.coin && liveQuotes.has(article.coin)
         ? {
-            currentPrice: liveQuotes.get(article.coin)?.price,
-            currentMarketCap: liveQuotes.get(article.coin)?.marketCap,
-            currentVolume24h: liveQuotes.get(article.coin)?.volume24h,
-            percentChange24h: liveQuotes.get(article.coin)?.percentChange24h,
-            lastUpdated: liveQuotes.get(article.coin)?.lastUpdated,
-          }
+          currentPrice: liveQuotes.get(article.coin)?.price,
+          currentMarketCap: liveQuotes.get(article.coin)?.marketCap,
+          currentVolume24h: liveQuotes.get(article.coin)?.volume24h,
+          percentChange24h: liveQuotes.get(article.coin)?.percentChange24h,
+          lastUpdated: liveQuotes.get(article.coin)?.lastUpdated,
+        }
         : null;
 
       return {
@@ -98,7 +105,7 @@ export async function GET(request: Request) {
         coinsQueried: uniqueCoins.length,
       },
     });
-    
+
   } catch (error) {
     console.error("Error fetching news:", error);
     return NextResponse.json(

@@ -27,6 +27,17 @@ export interface NewsType {
   sentiment?: string;
 }
 
+export interface EnrichedNewsArticle {
+  _id: string;
+  title: string;
+  content?: string;
+  coin?: string;
+  source?: string;
+  sentiment?: string;
+  publishedAt: string;
+  url: string;
+}
+
 export interface CoinQuote {
   id: string;
   symbol: string;
