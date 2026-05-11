@@ -14,7 +14,7 @@ export default function NewsIntelligencePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [expandedArticle, setExpandedArticle] = useState<EnrichedNewsArticle | null>(null);
-  const itemsPerPage = 6;
+  const itemsPerPage = 4;
 
   useEffect(() => {
     fetchNews(currentPage);
@@ -23,7 +23,7 @@ export default function NewsIntelligencePage() {
   const fetchNews = async (page: number) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/news/enriched?limit=${itemsPerPage}&page=${page}`);
+      const response = await fetch(`/api/enriched?limit=${itemsPerPage}&page=${page}`);
       const result = await response.json();
       if (result.success) {
         setNews(result.data);
@@ -79,9 +79,13 @@ export default function NewsIntelligencePage() {
       {/* Main Content Area */}
       <main>
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="h-96 rounded-3xl bg-zinc-900/40 animate-pulse border border-zinc-800/50" />
+          <div className="flex flex-col gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="flex flex-col md:flex-row rounded-2xl bg-zinc-900/40 animate-pulse border border-zinc-800/50 overflow-hidden" style={{ minHeight: '16rem' }}>
+                <div className="flex-[1.2] p-10" />
+                <div className="w-px bg-zinc-800/30 hidden md:block" />
+                <div className="flex-[0.8] p-10 bg-zinc-950/30" />
+              </div>
             ))}
           </div>
         ) : error ? (
@@ -103,7 +107,7 @@ export default function NewsIntelligencePage() {
           </div>
         ) : (
           <div className="space-y-16">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="flex flex-col gap-6">
               {news.map((article) => (
                 <IntelligenceNewsCard 
                   key={article._id} 
