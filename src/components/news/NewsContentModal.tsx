@@ -57,10 +57,6 @@ export default function NewsContentModal({ article, onClose }: NewsContentModalP
                 <polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" />
               </svg>
             </a>
-            
-            <button className="w-full sm:w-auto px-8 py-3 rounded-2xl bg-blue-600 text-white font-black hover:bg-blue-500 transition-all shadow-xl shadow-blue-600/20 active:scale-95">
-              Generate AI Summary
-            </button>
           </div>
         </div>
       </div>
