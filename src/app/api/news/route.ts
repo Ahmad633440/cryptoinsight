@@ -5,17 +5,30 @@ import { NextResponse } from "next/server";
 
 
 
-export async function GET() {
+export async function GET(request: Request) {
     try {
         await connectDB();
-        console.log('[DEBUG] DB connected in /api/news');
+        
+        const { searchParams } = new URL(request.url);
+        const limit = parseInt(searchParams.get("limit") || "20");
+        const page = parseInt(searchParams.get("page") || "1");
+        const skip = (page - 1) * limit;
 
-        const news = await News.find({}).sort({ createdAt: -1 });
-        console.log('[DEBUG] Found articles:', news.length);
+        const news = await News.find({})
+            .sort({ publishedAt: -1 })
+            .skip(skip)
+            .limit(limit);
+            
+        const total = await News.countDocuments({});
 
         return NextResponse.json({
             success: true,
             data: news,
+            meta: {
+                total,
+                page,
+                limit
+            }
         });
 
     } catch (error) {

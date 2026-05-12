@@ -100,7 +100,7 @@ export async function GET(request: Request) {
       success: true,
       data: enrichedNews,
       meta: {
-        total: newsArticles.length,
+        total: totalCount,
         liveData: true,
         coinsQueried: uniqueCoins.length,
       },
