@@ -12,6 +12,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+print("MongoDB URL:", os.getenv("MONGODB_URI"))
+print("Gemini Key exists:", bool(os.getenv("GEMINI_KEY")))
+print("Groq Key exists:", bool(os.getenv("GROQ_KEY")))
+
 app = Flask(__name__)
 CORS(app)
 
@@ -30,7 +34,8 @@ embeddings = GoogleGenerativeAIEmbeddings(
 vector_store = MongoDBAtlasVectorSearch(
     collection=collection,
     embedding=embeddings,
-    index_name="vector_index"
+    index_name="vector_index",
+    text_key="content"
 )
 
 llm = ChatGroq(
