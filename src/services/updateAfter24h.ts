@@ -95,6 +95,10 @@ export const updatePricesAfter24h = async (limit: number = 50): Promise<PriceUpd
   };
 
   try {
+    // Connect to MongoDB
+    const { connectDB } = await import("@/lib/db");
+    await connectDB();
+
     // Find news articles ready for price update
     // Articles enriched 24+ hours ago that don't have priceAfter yet
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);

@@ -2,6 +2,10 @@ import { connectDB } from '@/lib/db';
 import News from '@/models/news';
 import { NextResponse } from 'next/server';
 
+
+// GET /api/news/latest
+// Fetches the latest 50 news articles from MongoDB
+// Returns them sorted by publishedAt in descending order (newest first)
 export async function GET() {
     try {
         await connectDB();
@@ -25,6 +29,7 @@ export async function GET() {
             { message: 'Success', data: news },
             { status: 200 }
         );
+        
     } catch (error) {
         console.error('Error fetching news:', error);
         return NextResponse.json(

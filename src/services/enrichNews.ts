@@ -36,17 +36,23 @@ export const enrichSingleNews = async (newsId: string): Promise<{ success: boole
     const detectedCoin = detectCoin(news.title, news.content || undefined);
     
     if (!detectedCoin) {
-      // Mark as enriched but without coin data (skip processing)
+      // Edge case: General news (not related to any specific coin)
+      // Mark as enriched but without coin data (general news category)
       news.isEnriched = true;
       news.enrichedAt = new Date();
       await news.save();
-      return { success: false, error: "No coin detected" };
+      console.log(`[EDGE CASE] General news (no coin detected), marked as enriched: ${newsId}`);
+      return { success: false, error: "No coin detected (general news)" };
     }
 
     // Step 2: Validate coin exists in CoinMarketCap
     const isValid = await validateCoin(detectedCoin.symbol);
     if (!isValid) {
-      console.warn(`Coin ${detectedCoin.symbol} not found in CoinMarketCap, skipping`);
+      // Edge case: Coin mentioned but not in CoinMarketCap (invalid/new coin)
+      news.isEnriched = true;
+      news.enrichedAt = new Date();
+      await news.save();
+      console.warn(`[EDGE CASE] Coin ${detectedCoin.symbol} not found in CoinMarketCap, marked as enriched without data: ${newsId}`);
       return { success: false, error: "Coin not found in CMC" };
     }
 
@@ -75,7 +81,7 @@ export const enrichSingleNews = async (newsId: string): Promise<{ success: boole
 
     await news.save();
 
-    console.log(`Enriched news ${newsId}: ${detectedCoin.symbol} @ $${marketData.price.toFixed(2)}`);
+    console.log(`[ENRICHED] News ${newsId}: ${detectedCoin.symbol} @ $${marketData.price.toFixed(2)}`);
     return { success: true };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
@@ -97,6 +103,10 @@ export const enrichNews = async (limit: number = 50): Promise<EnrichmentResult> 
   };
 
   try {
+    // Connect to MongoDB
+    const { connectDB } = await import("@/lib/db");
+    await connectDB();
+
     // Find unenriched news articles
     const unenrichedNews = await News.find({ isEnriched: false })
       .sort({ publishedAt: -1 })
@@ -134,6 +144,9 @@ export const enrichNews = async (limit: number = 50): Promise<EnrichmentResult> 
  * Get news articles pending price update (24h after enrichment)
  */
 export const getNewsPendingPriceUpdate = async (): Promise<typeof News[]> => {
+  const { connectDB } = await import("@/lib/db");
+  await connectDB();
+
   const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
   return News.find({

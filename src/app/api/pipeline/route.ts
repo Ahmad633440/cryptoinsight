@@ -11,6 +11,7 @@ import { enrichNews } from "@/services/enrichNews";
 import { updatePricesAfter24h } from "@/services/updateAfter24h";
 import { NextResponse } from "next/server";
 
+
 // Trigger news enrichment
 export async function POST(request: Request) {
   try {
