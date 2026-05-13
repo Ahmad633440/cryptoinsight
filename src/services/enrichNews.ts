@@ -1,14 +1,18 @@
 
-
 /**
  * News enrichment service - enriches news articles with market data from CoinMarketCap
  * 
  * Flow:
  * 1. Find unenriched news articles
- * 2. Detect which coin the news is about
- * 3. Fetch current market data from CoinMarketCap
+ * 2. Use detected coins (or fall back to coin detection)
+ * 3. Fetch current market data from CoinMarketCap for primary coin
  * 4. Store market data as priceBefore, marketCapBefore, volume24hBefore
  * 5. Mark as enriched and schedule for price update
+ * 
+ * Multi-coin support:
+ * - Articles can have multiple detected coins
+ * - Enrichment focuses on primary coin (highest confidence)
+ * - Other coins are available in coins array for future features
  */
 
 import News from "@/models/news";
@@ -16,7 +20,51 @@ import { detectCoin, validateCoin } from "./detectCoin";
 import { getQuoteBySymbol } from "@/lib/coinMarketCap";
 import { CoinQuote, EnrichmentResult } from "@/data/types";
 
+/**
+ * Get the primary coin to enrich
+ * Priority:
+ * 1. Use highest confidence coin from coins array
+ * 2. Fall back to legacy coin field
+ * 3. Run coin detection
+ */
+const getPrimaryCoin = async (
+  newsDoc: any
+): Promise<{ symbol: string; confidence: string } | null> => {
+  // Check if coins array has data
+  if (newsDoc.coins && newsDoc.coins.length > 0) {
+    const primaryCoin = newsDoc.coins[0]; // Already sorted by score
+    console.log(
+      `[ENRICHMENT] Using detected coin: ${primaryCoin.symbol} (${primaryCoin.confidence})`
+    );
+    return {
+      symbol: primaryCoin.symbol,
+      confidence: primaryCoin.confidence,
+    };
+  }
 
+  // Fall back to legacy coin field
+  if (newsDoc.coin) {
+    console.log(`[ENRICHMENT] Using legacy coin field: ${newsDoc.coin}`);
+    return {
+      symbol: newsDoc.coin,
+      confidence: "legacy",
+    };
+  }
+
+  // Run detection as fallback
+  const detected = detectCoin(newsDoc.title, newsDoc.content || undefined);
+  if (detected) {
+    console.log(
+      `[ENRICHMENT] Detected coin via fallback: ${detected.symbol} (${detected.confidence})`
+    );
+    return {
+      symbol: detected.symbol,
+      confidence: detected.confidence,
+    };
+  }
+
+  return null;
+};
 
 /**
  * Enrich a single news article with market data
@@ -32,36 +80,37 @@ export const enrichSingleNews = async (newsId: string): Promise<{ success: boole
       return { success: false, error: "Already enriched" };
     }
 
-    // Step 1: Detect coin
-    const detectedCoin = detectCoin(news.title, news.content || undefined);
-    
-    if (!detectedCoin) {
+    // Step 1: Get primary coin to enrich
+    const primaryCoin = await getPrimaryCoin(news);
+
+    if (!primaryCoin) {
       // Edge case: General news (not related to any specific coin)
-      // Mark as enriched but without coin data (general news category)
       news.isEnriched = true;
       news.enrichedAt = new Date();
       await news.save();
-      console.log(`[EDGE CASE] General news (no coin detected), marked as enriched: ${newsId}`);
+      console.log(`[ENRICHMENT] General news (no coin detected), marked as enriched: ${newsId}`);
       return { success: false, error: "No coin detected (general news)" };
     }
 
     // Step 2: Validate coin exists in CoinMarketCap
-    const isValid = await validateCoin(detectedCoin.symbol);
+    const isValid = await validateCoin(primaryCoin.symbol);
     if (!isValid) {
       // Edge case: Coin mentioned but not in CoinMarketCap (invalid/new coin)
       news.isEnriched = true;
       news.enrichedAt = new Date();
       await news.save();
-      console.warn(`[EDGE CASE] Coin ${detectedCoin.symbol} not found in CoinMarketCap, marked as enriched without data: ${newsId}`);
+      console.warn(
+        `[ENRICHMENT] Coin ${primaryCoin.symbol} not found in CoinMarketCap, marked as enriched without data: ${newsId}`
+      );
       return { success: false, error: "Coin not found in CMC" };
     }
 
     // Step 3: Fetch current market data
     let marketData: CoinQuote | null = null;
     try {
-      marketData = await getQuoteBySymbol(detectedCoin.symbol);
+      marketData = await getQuoteBySymbol(primaryCoin.symbol);
     } catch (error) {
-      console.error(`Failed to fetch market data for ${detectedCoin.symbol}:`, error);
+      console.error(`Failed to fetch market data for ${primaryCoin.symbol}:`, error);
       return { success: false, error: "Failed to fetch market data" };
     }
 
@@ -70,7 +119,7 @@ export const enrichSingleNews = async (newsId: string): Promise<{ success: boole
     }
 
     // Step 4: Update news with market data
-    news.coin = detectedCoin.symbol;
+    news.coin = primaryCoin.symbol; // Update legacy field for backward compatibility
     news.coinId = marketData.id;
     news.priceBefore = marketData.price;
     news.marketCapBefore = marketData.marketCap;
@@ -81,7 +130,9 @@ export const enrichSingleNews = async (newsId: string): Promise<{ success: boole
 
     await news.save();
 
-    console.log(`[ENRICHED] News ${newsId}: ${detectedCoin.symbol} @ $${marketData.price.toFixed(2)}`);
+    console.log(
+      `[ENRICHED] News ${newsId}: ${primaryCoin.symbol} @ $${marketData.price.toFixed(2)}`
+    );
     return { success: true };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
@@ -120,7 +171,10 @@ export const enrichNews = async (limit: number = 50): Promise<EnrichmentResult> 
 
       if (enrichmentResult.success) {
         result.success++;
-      } else if (enrichmentResult.error === "No coin detected" || enrichmentResult.error === "Coin not found in CMC") {
+      } else if (
+        enrichmentResult.error === "No coin detected (general news)" ||
+        enrichmentResult.error === "Coin not found in CMC"
+      ) {
         result.skipped++;
       } else {
         result.failed++;

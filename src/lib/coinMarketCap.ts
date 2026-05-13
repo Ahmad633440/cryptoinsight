@@ -3,10 +3,11 @@ import axios, { AxiosInstance } from "axios";
 
 const API_KEY = process.env.COIN_MARKETCAP_API_KEY;
 
+
 if (!API_KEY) {
   throw new Error("COIN_MARKETCAP_API_KEY is not defined in environment variables");
 }
-
+// Note: CoinMarketCap's free tier has a rate limit of 30 requests per minute. The rateLimitedRequest function ensures we don't exceed this limit by spacing out requests.
 // Rate limiting: token bucket simulation
 let lastRequestTime = 0;
 const MIN_REQUEST_INTERVAL = 1000; // 1 second between requests

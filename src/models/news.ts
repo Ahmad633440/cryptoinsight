@@ -6,7 +6,19 @@ const NewsSchema = new mongoose.Schema({
     required: true,
   },
   content: String,
-  coin: String,
+  coin: String, // DEPRECATED: Legacy single coin field, kept for backward compatibility
+  coins: [
+    {
+      symbol: String, // e.g., "BTC", "ETH"
+      coinId: String, // CoinMarketCap ID (e.g., "1" for BTC)
+      confidence: {
+        type: String,
+        enum: ["high", "medium", "low"],
+        default: "medium",
+      },
+      score: Number, // Detection score (0-10)
+    },
+  ],
   category: String,
   source: String,
   sentiment: String,
@@ -40,12 +52,20 @@ const NewsSchema = new mongoose.Schema({
   },
   enrichedAt: Date,
   priceUpdatedAt: Date,
-  coinId: String, // CoinMarketCap coin ID (e.g., "1" for BTC)
+  coinId: String, // DEPRECATED: Legacy field, kept for backward compatibility
+  
+  // Coin detection tracking
+  coinsDetectedAt: Date, // When coins were auto-detected
+  coinsDetected: {
+    type: Boolean,
+    default: false, // Tracks if coins array has been populated
+  },
 }, { timestamps: true });
 
 // Index for efficient queries
 NewsSchema.index({ coin: 1, isEnriched: 1, publishedAt: -1 });
 NewsSchema.index({ priceUpdatedAt: 1 });
+NewsSchema.index({ coinsDetected: 1, coinsDetectedAt: 1 }); // For background worker
 
 export default mongoose.models.News || mongoose.model("News", NewsSchema);
 
