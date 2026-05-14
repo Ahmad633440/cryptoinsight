@@ -6,7 +6,19 @@ const NewsSchema = new mongoose.Schema({
     required: true,
   },
   content: String,
-  coin: String,
+  coin: String, 
+  coins: [
+    {
+      symbol: String, 
+      coinId: String, // CoinMarketCap ID 
+      confidence: {
+        type: String,
+        enum: ["high", "medium", "low"],
+        default: "medium",
+      },
+      score: Number, 
+    },
+  ],
   category: String,
   source: String,
   sentiment: String,
@@ -25,27 +37,31 @@ const NewsSchema = new mongoose.Schema({
     default: false,
   },
 
-  // Market data snapshot (stored at enrichment time)
-  priceBefore: Number,
-  marketCapBefore: Number,
-  volume24hBefore: Number,
-  priceAfter: Number,
-  priceChangePercent: Number,
-  impactDurationHours: Number,
+  // Market data from CoinMarketCap (stored 24 hours after article was published)
+  priceAfter: Number,          // Price snapshot 24 hours later
+  marketCapAfter: Number,      // Market cap snapshot 24 hours later
+  volume24hAfter: Number,      // Trading volume 24 hours later
 
   // Enrichment tracking
   isEnriched: {
     type: Boolean,
     default: false,
   },
-  enrichedAt: Date,
-  priceUpdatedAt: Date,
-  coinId: String, // CoinMarketCap coin ID (e.g., "1" for BTC)
+  enrichedAt: Date,      // When market data was fetched (immediately after coin detection)
+  priceUpdatedAt: Date,  // When 24h price update was recorded
+  
+  // Coin detection tracking
+  coinsDetectedAt: Date, // When coins were auto-detected
+  coinsDetected: {
+    type: Boolean,
+    default: false, // Tracks if coins array has been populated
+  },
 }, { timestamps: true });
 
 // Index for efficient queries
 NewsSchema.index({ coin: 1, isEnriched: 1, publishedAt: -1 });
 NewsSchema.index({ priceUpdatedAt: 1 });
+NewsSchema.index({ coinsDetected: 1, coinsDetectedAt: 1 }); // For background worker
 
 export default mongoose.models.News || mongoose.model("News", NewsSchema);
 

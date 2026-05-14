@@ -2,6 +2,9 @@
 import { syncNews } from '@/controllers/fetchNews';
 import { NextResponse } from 'next/server';
 
+
+// POST /api/sync
+// Manually trigger news synchronization from external API and store in MongoDB
 export async function POST() {
     try {
         console.log('Manual news sync triggered...');

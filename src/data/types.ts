@@ -56,6 +56,17 @@ export interface DetectedCoin {
   confidence: "high" | "medium" | "low";
 }
 
+/**
+ * Multiple coins detected from a single article
+ * Replaces DetectedCoin for multi-coin detection
+ */
+export interface DetectedCoinData {
+  symbol: string;
+  coinId: string;
+  confidence: "high" | "medium" | "low";
+  score: number; // 0-10 scale
+}
+
 export interface EnrichmentResult {
   success: number;
   failed: number;
@@ -95,4 +106,14 @@ export interface SimilarNewsResult {
   source: string;
   publishedAt: Date;
   score: number; // Vector similarity score (higher = more similar)
+}
+
+/**
+ * Result from coin detection background worker
+ */
+export interface CoinDetectionResult {
+  processed: number;
+  updated: number;
+  skipped: number;
+  errors: string[];
 }
