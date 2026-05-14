@@ -72,30 +72,29 @@ export const createNewsWithEmbedding = async (
   });
 
   // Automatically detect coins for newly created news
-  // This runs the NLP/entity-detection layer in real-time
+  console.log(`[COIN DETECTION] Running for news: ${news._id}`);
   try {
-    console.log(`[AUTO DETECTION] Running coin detection for news: ${news._id}`);
     const coinDetectionResult = await detectCoinsForNews(news._id.toString());
-    if (coinDetectionResult.success) {
+    if (coinDetectionResult.success && coinDetectionResult.coins) {
       console.log(
-        `[AUTO DETECTION] Successfully detected coins for news ${news._id}`
+        `[COIN DETECTION] ✅ Detected ${coinDetectionResult.coins.length} coin(s) for news ${news._id}`
       );
     } else {
       console.warn(
-        `[AUTO DETECTION] Coin detection returned non-success for ${news._id}:`,
-        coinDetectionResult.error
+        `[COIN DETECTION] ⚠️ No coins detected for ${news._id}`
       );
     }
   } catch (error) {
     console.error(
-      "[AUTO DETECTION] Failed to auto-detect coins for new news:",
+      "[COIN DETECTION] ❌ Failed:",
       error instanceof Error ? error.message : error
     );
-    // Don't fail the news creation if coin detection fails
-    // The background worker will retry later
   }
 
-  return { news, created: true, embedded: isEmbedded };
+  // Refresh and return the updated news document
+  const refreshedNews = await News.findById(news._id);
+
+  return { news: refreshedNews, created: true, embedded: isEmbedded };
 };
 
 export const embedPendingNews = async (limit: number = 50): Promise<number> => {

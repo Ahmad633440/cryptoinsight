@@ -1,40 +1,30 @@
 /**
- * Pipeline management API for enrichment and coin detection
+ * Pipeline management API for news processing
+ * 
+ * Processing Flow:
+ * 1. News fetched from external API (NewsData.io)
+ * 2. Coin detection runs IMMEDIATELY (NLP/entity detection)
+ * 3. 24 hours after publish: Market data captured (price, marketcap, volume)
  * 
  * Endpoints:
- * - POST /api/pipeline?action=enrich - Trigger news enrichment
  * - POST /api/pipeline?action=detect-coins - Trigger coin detection for legacy news
- * - POST /api/pipeline?action=update-prices - Trigger price updates (24h after enrichment)
- * - GET /api/pipeline - Get enrichment and detection status
+ * - POST /api/pipeline?action=update-prices - Trigger 24h price updates
+ * - GET /api/pipeline - Get pipeline status
  */
 
 import { connectDB } from "@/lib/db";
-import { enrichNews } from "@/services/enrichNews";
 import { updatePricesAfter24h } from "@/services/updateAfter24h";
 import { detectCoinsForLegacyNews, getCoinDetectionStats } from "@/services/coinDetectionService";
 import { NextResponse } from "next/server";
 
 
-// Trigger pipeline actions
+// Manual triggers for pipeline actions
 export async function POST(request: Request) {
   try {
     await connectDB();
 
     const { searchParams } = new URL(request.url);
     const action = searchParams.get("action");
-
-    if (action === "enrich") {
-      const limit = parseInt(searchParams.get("limit") || "50");
-      console.log(`[API] Manual enrichment triggered (limit: ${limit})`);
-      
-      const result = await enrichNews(limit);
-      
-      return NextResponse.json({
-        success: true,
-        action: "enrich",
-        result,
-      });
-    }
 
     if (action === "detect-coins") {
       const limit = parseInt(searchParams.get("limit") || "100");
@@ -45,6 +35,7 @@ export async function POST(request: Request) {
       return NextResponse.json({
         success: true,
         action: "detect-coins",
+        description: "Detect coins for legacy news (created before auto-detection existed)",
         result,
       });
     }
@@ -58,6 +49,7 @@ export async function POST(request: Request) {
       return NextResponse.json({
         success: true,
         action: "update-prices",
+        description: "Capture market data 24 hours after article published",
         result,
       });
     }
@@ -65,12 +57,17 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         success: false,
-        message: "Invalid action. Use ?action=enrich, ?action=detect-coins, or ?action=update-prices",
+        message: "Invalid action. Use ?action=detect-coins or ?action=update-prices",
+        availableActions: {
+          detectCoins: "POST /api/pipeline?action=detect-coins&limit=100",
+          updatePrices: "POST /api/pipeline?action=update-prices&limit=50",
+          getStatus: "GET /api/pipeline"
+        }
       },
       { status: 400 }
     );
   } catch (error) {
-    console.error("Error in pipeline trigger:", error);
+    console.error("[API] Error in pipeline trigger:", error);
     return NextResponse.json(
       {
         success: false,
@@ -91,41 +88,57 @@ export async function GET() {
 
     const [
       totalNews,
-      enrichedNews,
-      pendingEnrichment,
-      withPriceAfter,
+      enriched,
       pendingPriceUpdate,
+      withPriceAfter,
       coinsDetectionStats,
     ] = await Promise.all([
       News.countDocuments({}),
       News.countDocuments({ isEnriched: true }),
-      News.countDocuments({ isEnriched: false }),
-      News.countDocuments({ priceAfter: { $exists: true, $ne: null } }),
       News.countDocuments({
         isEnriched: true,
-        priceAfter: { $exists: false },
+        $or: [
+          { priceAfter: { $exists: false } },
+          { priceAfter: null }
+        ]
       }),
+      News.countDocuments({ priceAfter: { $exists: true, $ne: null } }),
       getCoinDetectionStats(),
     ]);
 
     return NextResponse.json({
       success: true,
+      description: "News processing pipeline status",
       status: {
-        // Enrichment pipeline
-        total: totalNews,
-        enriched: enrichedNews,
-        pendingEnrichment,
-        withPriceAfter,
-        pendingPriceUpdate,
-        
-        // Coin detection pipeline
-        coinsDetected: coinsDetectionStats.coinsDetected,
-        pendingCoinDetection: coinsDetectionStats.pending,
-        coinsNotFoundInArticles: coinsDetectionStats.coinsNotDetected,
+        overview: {
+          total: totalNews,
+          description: "Total news articles in database"
+        },
+        coinDetection: {
+          detected: coinsDetectionStats.coinsDetected,
+          pending: coinsDetectionStats.pending,
+          notFound: coinsDetectionStats.coinsNotDetected,
+          description: "Coins detected from article text"
+        },
+        enrichment: {
+          enriched: enriched,
+          description: "News with market data snapshot (priceBefore, marketCapBefore, volume24hBefore)"
+        },
+        priceUpdate: {
+          updated: withPriceAfter,
+          pending: pendingPriceUpdate,
+          description: "Articles that need 24h price update (priceAfter, marketCapAfter, volume24hAfter)"
+        }
       },
+      pipeline: {
+        step1: "News fetched from external API",
+        step2: "Coin detection runs immediately (finds coins mentioned in article)",
+        step3: "Enrichment runs immediately (fetches market data from CoinMarketCap)",
+        step4: "24 hours later: Price update runs (fetches current market data for comparison)"
+      }
     });
   } catch (error) {
-    console.error("Error getting pipeline status:", error);
+    console.error("[API] Error getting pipeline status:", error);
     return NextResponse.json(
       {
         success: false,
