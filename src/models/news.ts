@@ -41,6 +41,16 @@ const NewsSchema = new mongoose.Schema({
   priceAfter: Number,          // Price snapshot 24 hours later
   marketCapAfter: Number,      // Market cap snapshot 24 hours later
   volume24hAfter: Number,      // Trading volume 24 hours later
+marketSnapshot: {
+  openPrice: { type: Number, required: false },
+  highPrice: { type: Number },
+  lowPrice: { type: Number },
+  closePrice: { type: Number },
+  volume: { type: Number },
+  priceMovement: { type: Number },
+  marketDirection: { type: String }
+
+},
 
   // Enrichment tracking
   isEnriched: {
