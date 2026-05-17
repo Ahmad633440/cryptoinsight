@@ -5,6 +5,9 @@ import { NextResponse } from "next/server";
 
 
 
+// GET /api/news?limit=20&page=1
+// Fetch paginated news articles, sorted by published date (newest first)
+// it retrievves all news from mongoDB with pagination
 export async function GET(request: Request) {
     try {
         await connectDB();
@@ -42,7 +45,8 @@ export async function GET(request: Request) {
 }
 
 
-
+// POST /api/news
+// Create a new news article with embedding
 export async function POST(req: Request) {
     try {
         await connectDB();
@@ -50,7 +54,7 @@ export async function POST(req: Request) {
         const body = await req.json();
 
         // Basic validation
-        const requiredFields = ['title', 'coin', 'source', 'url'];
+        const requiredFields = ['title', 'source', 'url'];
         for (const field of requiredFields) {
             if (!body[field]) {
                 return NextResponse.json({

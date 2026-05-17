@@ -21,7 +21,7 @@ export const fetchCryptoNews = async () => {
         console.log('Results count:', res.data.results?.length || 0);
 
         if (!res.data.results || !Array.isArray(res.data.results)) {
-            console.warn(' No news results found');
+            console.warn('No news results found');
             return [];
         }
 
@@ -31,10 +31,10 @@ export const fetchCryptoNews = async () => {
             source: article.source_id || article.source_name || 'Unknown',
             publishedAt: new Date(article.pubDate || article.published_at),
             url: article.link || article.url,
-            coin: extractCoinFromTitle(article.title),
         }));
 
         console.log('Mapped articles:', mapped.length);
+
         return mapped;
     } catch (error) {
         console.error('Error fetching news from NewsData API:', error);
@@ -42,21 +42,25 @@ export const fetchCryptoNews = async () => {
     }
 };
 
-
-
-
 export const syncNews = async () => {
     try {
         console.log('Starting news sync...');
+
         await connectDB();
+
         console.log('DB connected');
-        
+
         const newsArticles = await fetchCryptoNews();
+
         console.log('Fetched articles:', newsArticles.length);
-        
+
         if (newsArticles.length === 0) {
             console.log('No new articles to sync');
-            return { synced: 0, failed: 0 };
+
+            return {
+                synced: 0,
+                failed: 0,
+            };
         }
 
         let synced = 0;
@@ -70,42 +74,62 @@ export const syncNews = async () => {
                     source: article.source,
                     publishedAt: article.publishedAt,
                     url: article.url,
-                    coin: article.coin,
                     sentiment: 'Neutral',
                 });
 
                 if (result.created) {
                     synced++;
-                    console.log('[DEBUG] News saved with embedding:', article.url, 'embedded=', result.embedded);
+
+                    console.log(
+                        '[DEBUG] News saved with embedding:',
+                        article.url,
+                        'embedded=',
+                        result.embedded
+                    );
                 } else {
                     console.log('[DEBUG] Duplicate skipped:', article.url);
                 }
             } catch (error) {
-                console.error(`[DEBUG] Failed to save article: ${article.title}`, error);
+                console.error(
+                    `[DEBUG] Failed to save article: ${article.title}`,
+                    error
+                );
+
                 failed++;
             }
         }
 
-        console.log(`[DEBUG] News sync completed. Synced: ${synced}, Failed: ${failed}`);
+        console.log(
+            `[DEBUG] News sync completed. Synced: ${synced}, Failed: ${failed}`
+        );
+
         return { synced, failed };
     } catch (error) {
         console.error('[DEBUG] Error syncing news:', error);
+
         throw error;
     }
 };
 
+export const detectCoin = (title: string) => {
+    const coins = [
+        'bitcoin',
+        'ethereum',
+        'btc',
+        'eth',
+        'cardano',
+        'ada',
+        'solana',
+        'sol',
+    ];
 
-
-
-function extractCoinFromTitle(title: string): string | undefined {
-    const coins = ['bitcoin', 'ethereum', 'btc', 'eth', 'cardano', 'ada', 'solana', 'sol'];
     const lowerTitle = title.toLowerCase();
-    
+
     for (const coin of coins) {
         if (lowerTitle.includes(coin)) {
             return coin;
         }
     }
-    
+
     return undefined;
-}
+};

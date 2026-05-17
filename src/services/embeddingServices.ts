@@ -1,6 +1,7 @@
 import News from "@/models/news";
 import { generateEmbedding } from "@/lib/embedding";
 import { NewsPayload } from "@/data/types";
+import { detectCoinsForNews } from "./coinDetectionService";
 
 
 
@@ -70,7 +71,30 @@ export const createNewsWithEmbedding = async (
     isEmbedded,
   });
 
-  return { news, created: true, embedded: isEmbedded };
+  // Automatically detect coins for newly created news
+  console.log(`[COIN DETECTION] Running for news: ${news._id}`);
+  try {
+    const coinDetectionResult = await detectCoinsForNews(news._id.toString());
+    if (coinDetectionResult.success && coinDetectionResult.coins) {
+      console.log(
+        `[COIN DETECTION] ✅ Detected ${coinDetectionResult.coins.length} coin(s) for news ${news._id}`
+      );
+    } else {
+      console.warn(
+        `[COIN DETECTION] ⚠️ No coins detected for ${news._id}`
+      );
+    }
+  } catch (error) {
+    console.error(
+      "[COIN DETECTION] ❌ Failed:",
+      error instanceof Error ? error.message : error
+    );
+  }
+
+  // Refresh and return the updated news document
+  const refreshedNews = await News.findById(news._id);
+
+  return { news: refreshedNews, created: true, embedded: isEmbedded };
 };
 
 export const embedPendingNews = async (limit: number = 50): Promise<number> => {
@@ -103,4 +127,3 @@ export const embedPendingNews = async (limit: number = 50): Promise<number> => {
 
   return processed;
 };
- 
