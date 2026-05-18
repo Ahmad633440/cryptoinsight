@@ -1,62 +1,42 @@
-import { connectDB } from "@/lib/db";
+﻿import { connectDB } from "@/lib/db";
 import { findSimilarNews } from "@/services/newsService";
 import { NextResponse } from "next/server";
 
-/**
- * POST /api/news/similar
- * Finds similar news articles based on vector similarity
- */
-export async function POST(req: Request) {
+export async function GET(req: Request) {
   try {
-    
     await connectDB();
 
-    const body = await req.json();
-    const { newsId } = body;
+    const url = new URL(req.url);
+    const pageParam = url.searchParams.get("page");
+    const limitParam = url.searchParams.get("limit");
+    const coinParam = url.searchParams.get("coin") || undefined;
 
-    if (!newsId) {
+    const page = pageParam ? parseInt(pageParam, 10) : 1;
+    const limit = limitParam ? parseInt(limitParam, 10) : 10;
+
+    if (Number.isNaN(page) || page < 1 || Number.isNaN(limit) || limit < 1) {
       return NextResponse.json(
         {
           success: false,
-          message: "News ID is required",
+          message: "Invalid pagination parameters. page and limit must be positive integers.",
         },
         { status: 400 }
       );
     }
 
-    // Find similar news using service layer
-    const similarNews = await findSimilarNews(newsId);
+    const response = await findSimilarNews({ page, limit, coin: coinParam });
 
-    // Return successful response
-    return NextResponse.json(
-      {
-        success: true,
-        similarNews,
-      },
-      { status: 200 }
-    );
+    return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
-
-    // Determine HTTP status based on error type
-    let status = 500;
-    if (
-      errorMessage.includes("Invalid") ||
-      errorMessage.includes("not found")
-    ) {
-      status = 404;
-    } else if (errorMessage.includes("Invalid news ID")) {
-      status = 400;
-    }
-
-    console.error("[API] Similar news search failed:", error);
+    console.error("[API] Similar news request failed:", error);
 
     return NextResponse.json(
       {
         success: false,
         message: errorMessage,
       },
-      { status }
+      { status: 500 }
     );
   }
 }

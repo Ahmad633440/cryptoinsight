@@ -5,6 +5,8 @@ import { NextResponse } from 'next/server';
 
 // POST /api/sync
 // Manually trigger news synchronization from external API and store in MongoDB
+// This endpoint is intended for testing and manual sync purposes. In production, consider using a scheduled job (e.g., with cron) for regular syncing.
+
 export async function POST() {
     try {
         console.log('Manual news sync triggered...');
