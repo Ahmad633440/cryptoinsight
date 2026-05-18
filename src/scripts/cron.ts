@@ -14,6 +14,10 @@ import { updatePricesAfter24h } from "@/services/updateAfter24h";
 import { detectCoinsForLegacyNews } from "@/services/coinDetectionService";
 import cron from "node-cron";
 
+
+// npx tsx src/scripts/cron.ts
+
+
 // Job 1: News sync - every 30 minutes
 // Fetches news from API and stores with immediate coin detection
 cron.schedule("*/30 * * * *", async () => {

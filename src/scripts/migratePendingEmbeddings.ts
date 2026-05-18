@@ -2,6 +2,10 @@ import "dotenv/config";
 import { connectDB } from "@/lib/db";
 import { embedPendingNews } from "@/services/embeddingServices";
 
+
+// npm install -D tsx
+// npx tsx src/scripts/migratePendingEmbeddings.ts
+
 const runMigration = async () => {
   let exitCode = 0;
 
