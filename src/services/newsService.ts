@@ -7,7 +7,7 @@ interface SimilarHistoricalItem {
   coin?: string;
   sentiment?: string;
   publishedAt: Date;
-  marketSnapshot?: unknown;
+  marketData?: unknown;
   similarityScore: number;
 }
 
@@ -21,7 +21,7 @@ interface SimilarNewsItem {
   publishedAt: Date;
   source?: string;
   url?: string;
-  marketSnapshot?: unknown;
+  marketData?: unknown;
   similarHistorical: SimilarHistoricalItem[];
 }
 
@@ -55,6 +55,7 @@ export const findSimilarNews = async ({
   const queryFilter: Record<string, unknown> = {
     isEmbedded: true,
     embedding: { $exists: true },
+    "embedding.0": { $exists: true },
   };
 
   if (coin) {
@@ -79,6 +80,11 @@ export const findSimilarNews = async ({
         source: 1,
         url: 1,
         marketSnapshot: 1,
+        openPrice: 1,
+        closePrice: 1,
+        marketDirection: 1,
+        marketDircetion: 1,
+        "movement_OpenClose_%": 1,
         embedding: 1,
       })
       .lean(),
@@ -94,15 +100,11 @@ export const findSimilarNews = async ({
         ? await News.aggregate<SimilarHistoricalItem>([
             {
               $vectorSearch: {
-                index: "news_vector_index",
+                index: "vector_index",
                 path: "embedding",
                 queryVector: embedding,
-                numCandidates: 100,
-                limit: 4,
-                filter: {
-                  isEmbedded: true,
-                  embedding: { $exists: true },
-                },
+                numCandidates: 150,
+                limit: 10,
               },
             },
             {
@@ -115,11 +117,21 @@ export const findSimilarNews = async ({
                 _id: 1,
                 title: 1,
                 coin: 1,
-                coins: 1,
                 sentiment: 1,
                 publishedAt: 1,
                 source: 1,
-                marketSnapshot: 1,
+                url: 1,
+                marketData: {
+                  $ifNull: [
+                    "$marketSnapshot",
+                    {
+                      openPrice: "$openPrice",
+                      closePrice: "$closePrice",
+                      marketDirection: { $ifNull: ["$marketDirection", "$marketDircetion"] },
+                      priceMovement: "$movement_OpenClose_%",
+                    },
+                  ],
+                },
                 similarityScore: { $meta: "vectorSearchScore" },
               },
             },
@@ -128,6 +140,14 @@ export const findSimilarNews = async ({
             },
           ])
         : [];
+
+    const marketData =
+      item.marketSnapshot ?? {
+        openPrice: item.openPrice,
+        closePrice: item.closePrice,
+        marketDirection: item.marketDirection ?? item.marketDircetion,
+        priceMovement: item["movement_OpenClose_%"],
+      };
 
     data.push({
       _id: String(item._id),
@@ -139,7 +159,7 @@ export const findSimilarNews = async ({
       publishedAt: item.publishedAt,
       source: item.source,
       url: item.url,
-      marketSnapshot: item.marketSnapshot,
+      marketData,
       similarHistorical,
     });
   }
