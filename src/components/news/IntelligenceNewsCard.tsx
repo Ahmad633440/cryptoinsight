@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { EnrichedNewsArticle } from "@/data/types";
+import { formatRelativeTime } from "@/lib/utils";
 import "./news-card.css";
 
 interface IntelligenceNewsCardProps {
@@ -79,11 +80,7 @@ export default function IntelligenceNewsCard({ article, onExpand }: Intelligence
             </span>
           )}
           <span className="news-card__date">
-            {new Date(article.publishedAt).toLocaleDateString(undefined, {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            })}
+            {formatRelativeTime(article.publishedAt)}
           </span>
         </div>
 
