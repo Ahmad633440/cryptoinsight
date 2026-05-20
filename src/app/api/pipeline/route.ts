@@ -80,72 +80,72 @@ export async function POST(request: Request) {
 }
 
 // Get pipeline status
-export async function GET() {
-  try {
-    await connectDB();
+// export async function GET() {
+//   try {
+//     await connectDB();
 
-    const News = (await import("@/models/news")).default;
+//     const News = (await import("@/models/news")).default;
 
-    const [
-      totalNews,
-      enriched,
-      pendingPriceUpdate,
-      withPriceAfter,
-      coinsDetectionStats,
-    ] = await Promise.all([
-      News.countDocuments({}),
-      News.countDocuments({ isEnriched: true }),
-      News.countDocuments({
-        isEnriched: true,
-        $or: [
-          { priceAfter: { $exists: false } },
-          { priceAfter: null }
-        ]
-      }),
-      News.countDocuments({ priceAfter: { $exists: true, $ne: null } }),
-      getCoinDetectionStats(),
-    ]);
+//     const [
+//       totalNews,
+//       enriched,
+//       pendingPriceUpdate,
+//       withPriceAfter,
+//       coinsDetectionStats,
+//     ] = await Promise.all([
+//       News.countDocuments({}),
+//       News.countDocuments({ isEnriched: true }),
+//       News.countDocuments({
+//         isEnriched: true,
+//         $or: [
+//           { priceAfter: { $exists: false } },
+//           { priceAfter: null }
+//         ]
+//       }),
+//       News.countDocuments({ priceAfter: { $exists: true, $ne: null } }),
+//       getCoinDetectionStats(),
+//     ]);
 
-    return NextResponse.json({
-      success: true,
-      description: "News processing pipeline status",
-      status: {
-        overview: {
-          total: totalNews,
-          description: "Total news articles in database"
-        },
-        coinDetection: {
-          detected: coinsDetectionStats.coinsDetected,
-          pending: coinsDetectionStats.pending,
-          notFound: coinsDetectionStats.coinsNotDetected,
-          description: "Coins detected from article text"
-        },
-        enrichment: {
-          enriched: enriched,
-          description: "News with market data snapshot (priceBefore, marketCapBefore, volume24hBefore)"
-        },
-        priceUpdate: {
-          updated: withPriceAfter,
-          pending: pendingPriceUpdate,
-          description: "Articles that need 24h price update (priceAfter, marketCapAfter, volume24hAfter)"
-        }
-      },
-      pipeline: {
-        step1: "News fetched from external API",
-        step2: "Coin detection runs immediately (finds coins mentioned in article)",
-        step3: "Enrichment runs immediately (fetches market data from CoinMarketCap)",
-        step4: "24 hours later: Price update runs (fetches current market data for comparison)"
-      }
-    });
-  } catch (error) {
-    console.error("[API] Error getting pipeline status:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Failed to get status",
-        error: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 }
-    );
-  }
-}
+//     return NextResponse.json({
+//       success: true,
+//       description: "News processing pipeline status",
+//       status: {
+//         overview: {
+//           total: totalNews,
+//           description: "Total news articles in database"
+//         },
+//         coinDetection: {
+//           detected: coinsDetectionStats.coinsDetected,
+//           pending: coinsDetectionStats.pending,
+//           notFound: coinsDetectionStats.coinsNotDetected,
+//           description: "Coins detected from article text"
+//         },
+//         enrichment: {
+//           enriched: enriched,
+//           description: "News with market data snapshot (priceBefore, marketCapBefore, volume24hBefore)"
+//         },
+//         priceUpdate: {
+//           updated: withPriceAfter,
+//           pending: pendingPriceUpdate,
+//           description: "Articles that need 24h price update (priceAfter, marketCapAfter, volume24hAfter)"
+//         }
+//       },
+//       pipeline: {
+//         step1: "News fetched from external API",
+//         step2: "Coin detection runs immediately (finds coins mentioned in article)",
+//         step3: "Enrichment runs immediately (fetches market data from CoinMarketCap)",
+//         step4: "24 hours later: Price update runs (fetches current market data for comparison)"
+//       }
+//     });
+//   } catch (error) {
+//     console.error("[API] Error getting pipeline status:", error);
+//     return NextResponse.json(
+//       {
+//         success: false,
+//         message: "Failed to get status",
+//         error: error instanceof Error ? error.message : "Unknown error",
+//       },
+//       { status: 500 }
+//     );
+//   }
+// }

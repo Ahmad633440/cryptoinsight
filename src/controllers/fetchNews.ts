@@ -112,6 +112,7 @@ export const syncNews = async () => {
 };
 
 export const detectCoin = (title: string) => {
+    
     const coins = [
         'bitcoin',
         'ethereum',
@@ -121,6 +122,24 @@ export const detectCoin = (title: string) => {
         'ada',
         'solana',
         'sol',
+        'binance',
+        'bnb',
+        'ripple',
+        'xrp',
+        'polkadot',
+        'dot',
+        'dogecoin',
+        'doge',
+        'avalanche',
+        'avax',
+        'chainlink',
+        'link',
+        'litecoin',
+        'ltc',
+        'polygon',
+        'matic',
+        'tron',
+        'trx',
     ];
 
     const lowerTitle = title.toLowerCase();

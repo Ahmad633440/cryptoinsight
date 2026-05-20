@@ -1,97 +1,176 @@
-import { SimilarNewsResult } from "@/data/types";
+﻿import mongoose from "mongoose";
 import News from "@/models/news";
 
+interface SimilarHistoricalItem {
+  _id: string;
+  title: string;
+  coin?: string;
+  sentiment?: string;
+  publishedAt: Date;
+  marketData?: unknown;
+  similarityScore: number;
+}
 
+interface SimilarNewsItem {
+  _id: string;
+  title: string;
+  content?: string;
+  coin?: string;
+  coins?: unknown[];
+  sentiment?: string;
+  publishedAt: Date;
+  source?: string;
+  url?: string;
+  marketData?: unknown;
+  similarHistorical: SimilarHistoricalItem[];
+}
 
-/**
- * Finds similar news articles based on vector similarity
- * Uses MongoDB Atlas Vector Search with cosine similarity
- * 
- * @param newsId - The MongoDB ID of the news article to find similar articles for
- * @returns Array of similar news articles (max 5) sorted by similarity score
- * @throws Error if database operation fails
- */
-export const findSimilarNews = async (
-  newsId: string
-): Promise<SimilarNewsResult[]> => {
-  // Validate newsId format (MongoDB ObjectId)
-  if (!newsId || typeof newsId !== "string" || newsId.trim() === "") {
-    throw new Error("Invalid news ID provided");
+interface SimilarNewsResponse {
+  success: true;
+  data: SimilarNewsItem[];
+  pagination: {
+    page: number;
+    limit: number;
+    hasMore: boolean;
+  };
+}
+
+export const findSimilarNews = async ({
+  page,
+  limit,
+  coin,
+}: {
+  page: number;
+  limit: number;
+  coin?: string;
+}): Promise<SimilarNewsResponse> => {
+  if (!Number.isInteger(page) || page < 1) {
+    throw new Error("Invalid page value. Page must be a positive integer.");
   }
 
-  // Convert string ID to MongoDB ObjectId
-  let objectId: any;
-  try {
-    objectId = new (await import("mongoose")).Types.ObjectId(newsId);
-  } catch {
-    throw new Error("Invalid MongoDB ID format");
+  if (!Number.isInteger(limit) || limit < 1) {
+    throw new Error("Invalid limit value. Limit must be a positive integer.");
   }
 
-  // Fetch the source news article
-  const sourceNews = await News.findById(objectId);
+  const queryFilter: Record<string, unknown> = {
+    isEmbedded: true,
+    embedding: { $exists: true },
+    "embedding.0": { $exists: true },
+  };
 
-  if (!sourceNews) {
-    throw new Error("News article not found");
+  if (coin) {
+    queryFilter.coin = coin;
   }
 
-  // Edge case: if news has no embedding or empty embedding
-  if (
-    !sourceNews.embedding ||
-    !Array.isArray(sourceNews.embedding) ||
-    sourceNews.embedding.length === 0
-  ) {
-    return [];
+  const skip = (page - 1) * limit;
+
+  const [totalCount, pageItems] = await Promise.all([
+    News.countDocuments(queryFilter),
+    News.find(queryFilter)
+      .sort({ publishedAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .select({
+        title: 1,
+        content: 1,
+        coin: 1,
+        coins: 1,
+        sentiment: 1,
+        publishedAt: 1,
+        source: 1,
+        url: 1,
+        marketSnapshot: 1,
+        openPrice: 1,
+        closePrice: 1,
+        marketDirection: 1,
+        marketDircetion: 1,
+        "movement_OpenClose_%": 1,
+        embedding: 1,
+      })
+      .lean(),
+  ]);
+
+  const data: SimilarNewsItem[] = [];
+
+  for (const item of pageItems) {
+    const embedding = Array.isArray(item.embedding) ? item.embedding : [];
+
+    const similarHistorical =
+      embedding.length > 0
+        ? await News.aggregate<SimilarHistoricalItem>([
+            {
+              $vectorSearch: {
+                index: "vector_index",
+                path: "embedding",
+                queryVector: embedding,
+                numCandidates: 150,
+                limit: 10,
+              },
+            },
+            {
+              $match: {
+                _id: { $ne: item._id },
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                title: 1,
+                coin: 1,
+                sentiment: 1,
+                publishedAt: 1,
+                source: 1,
+                url: 1,
+                marketData: {
+                  $ifNull: [
+                    "$marketSnapshot",
+                    {
+                      openPrice: "$openPrice",
+                      closePrice: "$closePrice",
+                      marketDirection: { $ifNull: ["$marketDirection", "$marketDircetion"] },
+                      priceMovement: "$movement_OpenClose_%",
+                    },
+                  ],
+                },
+                similarityScore: { $meta: "vectorSearchScore" },
+              },
+            },
+            {
+              $limit: 3,
+            },
+          ])
+        : [];
+
+    const marketData =
+      item.marketSnapshot ?? {
+        openPrice: item.openPrice,
+        closePrice: item.closePrice,
+        marketDirection: item.marketDirection ?? item.marketDircetion,
+        priceMovement: item["movement_OpenClose_%"],
+      };
+
+    data.push({
+      _id: String(item._id),
+      title: item.title,
+      content: item.content,
+      coin: item.coin,
+      coins: item.coins,
+      sentiment: item.sentiment,
+      publishedAt: item.publishedAt,
+      source: item.source,
+      url: item.url,
+      marketData,
+      similarHistorical,
+    });
   }
 
-  // Build filter based on coin field
-  // If coin exists → filter by same coin (market-specific)
-  //           If no coin → no filter (market-wide news)
-  const filterCondition = sourceNews.coin
-    ? { coin: sourceNews.coin }
-    : {};
-
-  try {
-    // MongoDB Atlas Vector Search aggregation pipeline
-    const results = await News.aggregate([
-      {
-        // Vector search stage - finds closest vectors in embedding space
-        $vectorSearch: {
-          index: "vector_index",
-          path: "embedding",
-          queryVector: sourceNews.embedding,
-          numCandidates: 100, // Evaluate top 100 candidates for performance
-          limit: 5, // Return max 5 results
-          filter: filterCondition, // Apply coin filter only if coin exists
-        },
-      },
-      {
-        // Exclude the source news itself from results
-        $match: {
-          _id: { $ne: objectId },
-        },
-      },
-      {
-        // Project only necessary fields for response
-        $project: {
-          title: 1,
-          content: 1,
-          coin: 1,
-          source: 1,
-          publishedAt: 1,
-          score: { $meta: "vectorSearchScore" },
-        },
-      },
-    ]);
-
-    return results as SimilarNewsResult[];
-
-    
-  } catch (error) {
-    console.error("Vector search failed:", error);
-    throw new Error(
-      `Vector search operation failed: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`
-    );
-  }
+  return {
+    success: true,
+    data,
+    pagination: {
+      page,
+      limit,
+      hasMore: page * limit < totalCount,
+    },
+  };
 };

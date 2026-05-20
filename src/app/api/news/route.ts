@@ -47,54 +47,54 @@ export async function GET(request: Request) {
 
 // POST /api/news
 // Create a new news article with embedding
-export async function POST(req: Request) {
-    try {
-        await connectDB();
+// export async function POST(req: Request) {
+//     try {
+//         await connectDB();
 
-        const body = await req.json();
+//         const body = await req.json();
 
-        // Basic validation
-        const requiredFields = ['title', 'source', 'url'];
-        for (const field of requiredFields) {
-            if (!body[field]) {
-                return NextResponse.json({
-                    success: false,
-                    message: `Missing required field: ${field}`
-                }, { status: 400 });
-            }
-        }
+//         // Basic validation
+//         const requiredFields = ['title', 'source', 'url'];
+//         for (const field of requiredFields) {
+//             if (!body[field]) {
+//                 return NextResponse.json({
+//                     success: false,
+//                     message: `Missing required field: ${field}`
+//                 }, { status: 400 });
+//             }
+//         }
 
-        if (!body.content && !body.description) {
-            return NextResponse.json({
-                success: false,
-                message: 'Missing required field: content or description'
-            }, { status: 400 });
-        }
+//         if (!body.content && !body.description) {
+//             return NextResponse.json({
+//                 success: false,
+//                 message: 'Missing required field: content or description'
+//             }, { status: 400 });
+//         }
 
-        const { news, created, embedded } = await createNewsWithEmbedding({
-            title: body.title,
-            content: body.content || body.description,
-            source: body.source,
-            publishedAt: new Date(body.publishedAt || Date.now()),
-            url: body.url,
-            coin: body.coin,
-            category: body.category,
-            sentiment: body.sentiment || 'Neutral',
-        });
+//         const { news, created, embedded } = await createNewsWithEmbedding({
+//             title: body.title,
+//             content: body.content || body.description,
+//             source: body.source,
+//             publishedAt: new Date(body.publishedAt || Date.now()),
+//             url: body.url,
+//             coin: body.coin,
+//             category: body.category,
+//             sentiment: body.sentiment || 'Neutral',
+//         });
 
-        return NextResponse.json({
-            success: true,
-            message: created ? "News stored successfully" : "News already exists",
-            data: news,
-            embedded,
-        });
+//         return NextResponse.json({
+//             success: true,
+//             message: created ? "News stored successfully" : "News already exists",
+//             data: news,
+//             embedded,
+//         });
 
-    } catch (error) {
-        console.error("Error creating news:", error);
-        return NextResponse.json({
-            success: false,
-            message: "Failed to store news",
-            error: error instanceof Error ? error.message : "Unknown error",
-        }, { status: 500 });
-    }
-}
+//     } catch (error) {
+//         console.error("Error creating news:", error);
+//         return NextResponse.json({
+//             success: false,
+//             message: "Failed to store news",
+//             error: error instanceof Error ? error.message : "Unknown error",
+//         }, { status: 500 });
+//     }
+// }
