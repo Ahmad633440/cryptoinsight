@@ -14,7 +14,7 @@ export default function NewsIntelligencePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [expandedArticle, setExpandedArticle] = useState<EnrichedNewsArticle | null>(null);
-  const itemsPerPage = 4;
+  const itemsPerPage = 10;
 
   useEffect(() => {
     fetchNews(currentPage);
@@ -26,7 +26,11 @@ export default function NewsIntelligencePage() {
       const response = await fetch(`/api/enriched?limit=${itemsPerPage}&page=${page}`);
       const result = await response.json();
       if (result.success) {
-        setNews(result.data);
+        // Sort articles by publishedAt descending to guarantee that the more recent news is displayed first
+        const sortedArticles = [...result.data].sort((a, b) => 
+          new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+        );
+        setNews(sortedArticles);
         setTotalItems(result.meta.total || 0);
       } else {
         setError(result.message || "Failed to load news");
@@ -80,7 +84,7 @@ export default function NewsIntelligencePage() {
       <main>
         {isLoading ? (
           <div className="flex flex-col gap-6">
-            {[1, 2, 3, 4].map((i) => (
+            {Array.from({ length: itemsPerPage }).map((_, i) => (
               <div key={i} className="flex flex-col md:flex-row rounded-2xl bg-zinc-900/40 animate-pulse border border-zinc-800/50 overflow-hidden" style={{ minHeight: '16rem' }}>
                 <div className="flex-[1.2] p-10" />
                 <div className="w-px bg-zinc-800/30 hidden md:block" />

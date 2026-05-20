@@ -3,6 +3,7 @@
 import React from "react";
 import Badge from "@/components/ui/Badge";
 import { EnrichedNewsArticle } from "@/data/types";
+import { formatRelativeTime } from "@/lib/utils";
 
 interface NewsContentModalProps {
   article: EnrichedNewsArticle;
@@ -30,7 +31,7 @@ export default function NewsContentModal({ article, onClose }: NewsContentModalP
               {article.coin || "General"}
             </Badge>
             <span className="text-xs text-zinc-600 font-bold">
-              {new Date(article.publishedAt).toLocaleDateString()}
+              {formatRelativeTime(article.publishedAt)}
             </span>
           </div>
           
