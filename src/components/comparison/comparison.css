@@ -1,0 +1,303 @@
+/* ==========================================================================
+   News Comparison Module - Modern Styling
+   ========================================================================== */
+
+.comparison-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  width: 100%;
+}
+
+/* ── Comparative Row Layout ── */
+.comparison-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  width: 100%;
+  position: relative;
+  border-radius: 1.5rem;
+  background: rgba(15, 15, 18, 0.4);
+  border: 1px solid rgba(63, 63, 70, 0.3);
+  padding: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.comparison-row:hover {
+  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow: 0 12px 40px -12px rgba(99, 102, 241, 0.12),
+              inset 0 1px 1px rgba(255, 255, 255, 0.02);
+}
+
+/* Desktop layout: Left (Current News), Middle (Connector), Right (Historical Events) */
+@media (min-width: 1024px) {
+  .comparison-row {
+    grid-template-columns: 1.2fr 80px 1.8fr;
+    padding: 2rem;
+    gap: 0;
+  }
+}
+
+/* ── Main Current Card ── */
+.current-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+.current-card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.current-card__title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.4;
+  margin: 0;
+  transition: color 0.2s ease;
+}
+
+.comparison-row:hover .current-card__title {
+  color: #a5b4fc;
+}
+
+.current-card__body {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #9ca3af;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Visual Connectors ── */
+.connector-col {
+  display: none;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 1024px) {
+  .connector-col {
+    display: flex;
+  }
+}
+
+.connector-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    rgba(99, 102, 241, 0.05),
+    rgba(99, 102, 241, 0.3) 30%,
+    rgba(139, 92, 246, 0.3) 70%,
+    rgba(139, 92, 246, 0.05)
+  );
+}
+
+.connector-pulse-path {
+  position: absolute;
+  width: 100%;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.connector-node {
+  position: relative;
+  z-index: 10;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: #09090b;
+  border: 2px solid #6366f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+  transition: all 0.3s ease;
+}
+
+.comparison-row:hover .connector-node {
+  transform: scale(1.15);
+  border-color: #8b5cf6;
+  box-shadow: 0 0 25px rgba(139, 92, 246, 0.6);
+}
+
+.connector-node-inner {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #6366f1;
+  transition: all 0.3s ease;
+}
+
+.comparison-row:hover .connector-node-inner {
+  background: #8b5cf6;
+  transform: scale(1.2);
+}
+
+/* ── Historical Grid ── */
+.historical-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: center;
+  height: 100%;
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .historical-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ── Historical Event Card ── */
+.historical-card {
+  position: relative;
+  border-radius: 1rem;
+  border: 1px solid rgba(63, 63, 70, 0.2);
+  background: rgba(24, 24, 27, 0.3);
+  padding: 1.25rem;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.historical-card:hover {
+  background: rgba(39, 39, 42, 0.4);
+  border-color: rgba(139, 92, 246, 0.25);
+  transform: translateX(4px);
+}
+
+.historical-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, #8b5cf6, #3b82f6);
+  opacity: 0.4;
+  transition: opacity 0.25s;
+}
+
+.historical-card:hover::before {
+  opacity: 1;
+}
+
+.historical-card__title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #e4e4e7;
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Similarity Badge */
+.similarity-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 9999px;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  color: #c084fc;
+}
+
+/* ── Market Impact Widget ── */
+.market-widget {
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+}
+
+.market-widget--bullish {
+  background: rgba(16, 185, 129, 0.04);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+.market-widget--bearish {
+  background: rgba(239, 68, 68, 0.04);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+}
+
+.market-widget--neutral {
+  background: rgba(113, 113, 122, 0.04);
+  border: 1px solid rgba(113, 113, 122, 0.15);
+}
+
+/* ── Grid/List Filters ── */
+.filter-tabs {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.25rem;
+  background: rgba(24, 24, 27, 0.8);
+  border: 1px solid rgba(63, 63, 70, 0.5);
+  border-radius: 0.75rem;
+}
+
+.filter-tab-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 0.5rem;
+  color: #71717a;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: transparent;
+  border: none;
+}
+
+.filter-tab-btn:hover {
+  color: #fafafa;
+}
+
+.filter-tab-btn--active {
+  background: #27272a;
+  color: #fafafa;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Glow decoration */
+.glow-spot {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+  top: -100px;
+  left: -50px;
+  pointer-events: none;
+  z-index: 0;
+}

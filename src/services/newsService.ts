@@ -1,4 +1,4 @@
-﻿import mongoose from "mongoose";
+import mongoose from "mongoose";
 import News from "@/models/news";
 
 interface SimilarHistoricalItem {
@@ -32,6 +32,7 @@ interface SimilarNewsResponse {
     page: number;
     limit: number;
     hasMore: boolean;
+    total: number;
   };
 }
 
@@ -171,6 +172,7 @@ export const findSimilarNews = async ({
       page,
       limit,
       hasMore: page * limit < totalCount,
+      total: totalCount,
     },
   };
 };
