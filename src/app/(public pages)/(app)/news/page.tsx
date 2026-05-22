@@ -14,7 +14,7 @@ export default function NewsIntelligencePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [expandedArticle, setExpandedArticle] = useState<EnrichedNewsArticle | null>(null);
-  const itemsPerPage = 10;
+  const itemsPerPage = 20;
 
   useEffect(() => {
     fetchNews(currentPage);
