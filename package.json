@@ -11,7 +11,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:coingecko": "tsx src/scripts/testCoinGecko.ts"
   },
   "dependencies": {
     "@google/genai": "^1.51.0",

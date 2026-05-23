@@ -86,10 +86,11 @@ export const getQuotes = async (symbols: string[]): Promise<Map<string, CoinQuot
 export const getQuoteBySymbol = async (symbol: string): Promise<CoinQuote | null> => {
     try {
         const quotes = await getQuotes([symbol.toUpperCase()]);
-        return quotes.get(symbol.toUpperCase()) || null;
-        
-        console.log(`Fetched quote for ${symbol} `);
-
+        const quote = quotes.get(symbol.toUpperCase()) || null;
+        if (quote) {
+          console.log(`Fetched quote for ${symbol}`);
+        }
+        return quote;
         
     } catch (error) {
       console.error(`Failed to fetch quote for ${symbol}:`, error);
