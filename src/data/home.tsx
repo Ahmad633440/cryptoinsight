@@ -110,11 +110,11 @@ export const MARKET_GROWTH = {
   title: "Global Adoption Curve",
   subtitle: "The number of cryptocurrency users is doubling almost every two years, following a similar path to early internet adoption.",
   stats: [
-    { year: "2014", users: "10M", height: "10%" },
-    { year: "2016", users: "25M", height: "18%" },
-    { year: "2018", users: "60M", height: "30%" },
-    { year: "2020", users: "150M", height: "50%" },
-    { year: "2022", users: "320M", height: "75%" },
-    { year: "2024", users: "580M", height: "100%" }
+    { year: "2016", users: "25M", height: "10%" },
+    { year: "2018", users: "60M", height: "18%" },
+    { year: "2020", users: "150M", height: "30%" },
+    { year: "2022", users: "320M", height: "50%" },
+    { year: "2024", users: "580M", height: "75%" },
+    { year: "May 2026", users: "900M+", height: "100%" }
   ]
 };

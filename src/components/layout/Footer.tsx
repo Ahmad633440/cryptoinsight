@@ -24,12 +24,12 @@ const FOOTER_LINKS = {
 export default function Footer() {
   return (
     <footer className="border-t border-zinc-800/60 bg-zinc-950">
-      <div className="px-8 py-12">
+      <div className="px-4 sm:px-6 md:px-8 py-8 sm:py-10 md:py-12">
         {/* ── Top Section ─────────────────── */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
 
           {/* Brand */}
-          <div className="col-span-2 md:col-span-1">
+          <div className="sm:col-span-2 lg:col-span-2">
             <div className="flex items-center gap-2 mb-4">
               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -70,7 +70,7 @@ export default function Footer() {
         <div className="border-t border-zinc-800/60" />
 
         {/* ── Bottom Section ──────────────── */}
-        <div className="flex flex-col sm:flex-row items-center justify-between pt-8 gap-4">
+        <div className="flex flex-col lg:flex-row items-center justify-between pt-8 gap-6 text-center lg:text-left">
           <p className="text-xs text-zinc-600">
             © {new Date().getFullYear()} CryptoInsight. All rights reserved.
           </p>

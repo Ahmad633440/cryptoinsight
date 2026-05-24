@@ -16,17 +16,17 @@ interface StatCardsProps {
 
 export default function StatCards({ stats }: StatCardsProps) {
   return (
-    <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
       {stats.map((stat, i) => (
-        <Card key={stat.label} hover className={`p-5 animate-fade-up delay-${i + 1}`}>
-          <div className="flex items-start justify-between mb-3">
+        <Card key={stat.label} hover className={`p-4 sm:p-5 animate-fade-up delay-${i + 1}`}>
+          <div className="flex items-start justify-between mb-2 sm:mb-3">
             <span className="text-zinc-500">{stat.icon}</span>
             <Badge variant={stat.positive ? "green" : "red"}>
               {stat.change}
             </Badge>
           </div>
-          <p className="text-2xl font-bold text-white tracking-tight">{stat.value}</p>
-          <p className="text-xs text-zinc-500 mt-1">{stat.label}</p>
+          <p className="text-xl sm:text-2xl font-bold text-white tracking-tight break-all">{stat.value}</p>
+          <p className="text-[10px] sm:text-xs text-zinc-500 mt-1">{stat.label}</p>
         </Card>
       ))}
     </section>
