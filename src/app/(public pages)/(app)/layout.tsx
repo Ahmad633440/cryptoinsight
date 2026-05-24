@@ -19,7 +19,7 @@ export default function AppLayout({
       />
       <div
         className={`
-          flex-1 flex flex-col
+          flex-1 flex flex-col w-full min-w-0
           transition-all duration-300 ease-in-out
           ${sidebarCollapsed ? "lg:pl-[72px]" : "lg:pl-64"}
         `}

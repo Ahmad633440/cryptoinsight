@@ -141,9 +141,9 @@ export default function HomePage() {
               </p>
               <div className="pt-4 flex items-center gap-4">
                 <div className="px-4 py-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xl font-bold">
-                  580M+
+                  900M+
                 </div>
-                <span className="text-xs text-zinc-600 font-medium uppercase tracking-widest">Global Users<br/>by 2024</span>
+                <span className="text-xs text-zinc-600 font-medium uppercase tracking-widest">Global Users<br/>by May 2026</span>
               </div>
             </div>
 

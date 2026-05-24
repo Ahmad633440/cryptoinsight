@@ -28,29 +28,29 @@ export default function GainerLoserList({
   const changePrefix = isPositive ? "+" : "";
 
   return (
-    <Card className="p-5 h-full">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-white">{title}</h3>
-        <Badge variant={badgeVariant}>{subtitle}</Badge>
+    <Card className="p-4 sm:p-5 h-full">
+      <div className="flex items-center justify-between mb-3 sm:mb-4 gap-2">
+        <h3 className="text-xs sm:text-sm font-semibold text-white truncate">{title}</h3>
+        <Badge variant={badgeVariant} className="shrink-0 text-[9px] sm:text-[11px]">{subtitle}</Badge>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-2.5 sm:space-y-3">
         {data.map((coin) => (
-          <div key={coin.symbol} className="flex items-center justify-between group cursor-pointer">
-            <div className="flex items-center gap-2.5">
+          <div key={coin.symbol} className="flex items-center justify-between group cursor-pointer gap-2">
+            <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
               <div
-                className="h-7 w-7 rounded-lg flex items-center justify-center text-[9px] font-bold text-white transition-opacity group-hover:opacity-80"
+                className="h-6 w-6 sm:h-7 sm:w-7 rounded-md sm:rounded-lg flex items-center justify-center text-[8px] sm:text-[9px] font-bold text-white transition-opacity group-hover:opacity-80 shrink-0"
                 style={{ background: `linear-gradient(135deg, ${coin.color}, ${coin.color}99)` }}
               >
                 {coin.symbol.slice(0, 2)}
               </div>
-              <div>
-                <p className="text-xs font-medium text-white group-hover:text-blue-400 transition-colors uppercase">
+              <div className="min-w-0">
+                <p className="text-[10px] sm:text-xs font-medium text-white group-hover:text-blue-400 transition-colors uppercase truncate">
                   {coin.name}
                 </p>
-                <p className="text-[10px] text-zinc-600 uppercase">{coin.symbol}</p>
+                <p className="text-[9px] sm:text-[10px] text-zinc-600 uppercase">{coin.symbol}</p>
               </div>
             </div>
-            <span className={`text-xs font-semibold ${changeColor}`}>
+            <span className={`text-[10px] sm:text-xs font-semibold ${changeColor} shrink-0`}>
               {changePrefix}{coin.change.toFixed(2)}%
             </span>
           </div>
