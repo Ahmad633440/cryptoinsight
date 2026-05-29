@@ -1,0 +1,17 @@
+name: Coin Detection Cron (5 minutes)
+
+on:
+  schedule:
+    - cron: "*/5 * * * *" # Every 5 minutes
+  workflow_dispatch:
+
+jobs:
+  detect-coins:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Coin Detection
+        run: |
+          curl -X GET \
+            'https://cryptoinsight-red.vercel.app/api/cron/coin-detection' \
+            -H "User-Agent: GitHub-Actions"
+        continue-on-error: true

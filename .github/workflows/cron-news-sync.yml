@@ -1,0 +1,17 @@
+name: News Sync Cron (10 minutes)
+
+on:
+  schedule:
+    - cron: "*/10 * * * *" # Every 10 minutes
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  sync-news:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger News Sync
+        run: |
+          curl -X GET \
+            'https://cryptoinsight-red.vercel.app/api/cron/news-sync' \
+            -H "User-Agent: GitHub-Actions"
+        continue-on-error: true
