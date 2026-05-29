@@ -20,7 +20,7 @@ import cron from "node-cron";
 
 // Job 1: News sync - every 30 minutes
 // Fetches news from API and stores with immediate coin detection
-cron.schedule("*/30 * * * *", async () => {
+cron.schedule("*/10 * * * *", async () => {
   try {
     console.log("[CRON] ========== News sync ==========");
     const result = await syncNews();
@@ -34,7 +34,7 @@ cron.schedule("*/30 * * * *", async () => {
 // Job 2: Coin detection - every 10 minutes
 // Detects coins for OLD news that don't have coin data yet
 // (for legacy articles created before coin detection was added)
-cron.schedule("*/10 * * * *", async () => {
+cron.schedule("*/5 * * * *", async () => {
   try {
     console.log("[CRON] ========== Coin detection (legacy data) ==========");
     const result = await detectCoinsForLegacyNews(100);
