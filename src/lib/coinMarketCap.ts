@@ -46,69 +46,37 @@ cmcClient.interceptors.response.use(
 );
 
 /**
- * Get news for specific coins by symbol
+ * Get quote for specific coins by symbol
  * @param symbols - Array of coin symbols (e.g., ["BTC", "ETH", "XRP"])
- * @returns Map of symbol -> news data
+ * @returns Map of symbol -> quote data
  */
 export const getQuotes = async (symbols: string[]): Promise<Map<string, CoinQuote>> => {
   return rateLimitedRequest(async () => {
-    try {
-      const response = await cmcClient.get("/cryptocurrency/quotes/latest", {
-        params: {
-          symbol: symbols.join(","),
-          convert: "USD",
-        },
+    const response = await cmcClient.get("/cryptocurrency/quotes/latest", {
+      params: {
+        symbol: symbols.join(","),
+        convert: "USD",
+      },
+    });
+
+    const data = response.data.data;
+    const quoteMap = new Map<string, CoinQuote>();
+
+    for (const [symbol, coinData] of Object.entries(data)) {
+      const quote = (coinData as any).quote.USD;
+      quoteMap.set(symbol, {
+        id: (coinData as any).id,
+        symbol: symbol,
+        name: (coinData as any).name,
+        price: quote.price,
+        marketCap: quote.market_cap,
+        volume24h: quote.volume_24h,
+        percentChange24h: quote.percent_change_24h,
+        lastUpdated: quote.last_updated,
       });
-
-      const data = response.data?.data;
-      
-      // Validate response structure
-      if (!data || typeof data !== 'object') {
-        console.error("Invalid API response structure:", response.data);
-        throw new Error(`Unexpected API response format: ${JSON.stringify(response.data).substring(0, 200)}`);
-      }
-
-      const quoteMap = new Map<string, CoinQuote>();
-
-      for (const [symbol, coinData] of Object.entries(data)) {
-        try {
-          const quote = (coinData as any).quote?.USD;
-          
-          if (!quote) {
-            console.warn(`No USD quote data for ${symbol}, skipping...`);
-            continue;
-          }
-
-          quoteMap.set(symbol, {
-            id: (coinData as any).id,
-            symbol: symbol,
-            name: (coinData as any).name,
-            price: quote.price,
-            marketCap: quote.market_cap,
-            volume24h: quote.volume_24h,
-            percentChange24h: quote.percent_change_24h,
-            lastUpdated: quote.last_updated,
-          });
-        } catch (itemError) {
-          console.warn(`Failed to parse quote for ${symbol}:`, itemError);
-          continue;
-        }
-      }
-
-      if (quoteMap.size === 0) {
-        console.error("No valid quotes returned from API");
-        throw new Error("No valid cryptocurrency quotes returned from API");
-      }
-
-      return quoteMap;
-    } catch (error) {
-      console.error("CoinMarketCap API error:", {
-        error: error instanceof Error ? error.message : error,
-        symbols: symbols,
-        timestamp: new Date().toISOString(),
-      });
-      throw error;
     }
+
+    return quoteMap;
   });
 };
 

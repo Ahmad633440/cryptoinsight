@@ -59,20 +59,12 @@ export async function GET(request: Request) {
 
     // Fetch live data for all unique coins
     let liveQuotes: Map<string, CoinQuote> = new Map();
-    let liveDataSuccess = false;
     if (uniqueCoins.length > 0) {
       try {
-        console.log(`Fetching live quotes for ${uniqueCoins.length} coins:`, uniqueCoins);
         liveQuotes = await getQuotes(uniqueCoins as string[]);
-        liveDataSuccess = liveQuotes.size > 0;
-        console.log(`Successfully fetched ${liveQuotes.size} live quotes`);
       } catch (error) {
-        console.error("Failed to fetch live market data:", {
-          error: error instanceof Error ? error.message : error,
-          coins: uniqueCoins,
-          timestamp: new Date().toISOString(),
-        });
-        // Continue without live data - return stored data only
+        console.error("Failed to fetch live market data:", error);
+        // Continue without live data
       }
     }
 
@@ -109,11 +101,8 @@ export async function GET(request: Request) {
       data: enrichedNews,
       meta: {
         total: totalCount,
-        page,
-        limit,
-        liveData: liveDataSuccess,
+        liveData: true,
         coinsQueried: uniqueCoins.length,
-        coinsWithLiveData: liveQuotes.size,
       },
     });
 
