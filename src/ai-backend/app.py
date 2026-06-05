@@ -1,3 +1,4 @@
+
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_mongodb import MongoDBAtlasVectorSearch
 from langchain_groq import ChatGroq
@@ -68,17 +69,12 @@ chain = (
     | StrOutputParser()
 )
 
-@app.route('/', methods=['GET'])
-def health():
-    return jsonify({"status": "ok"}), 200
-
-@app.route('/', methods=['GET'])
-def health():
-    return jsonify({"status": "ok"}), 200
-
 @app.route('/ask', methods=['POST'])
 def ask():
     data = request.get_json()
     user_question = data['question']
     answer = chain.invoke(user_question)
     return jsonify({"answer": answer})
+
+if name == 'main':
+    app.run(debug=False, threaded=True)
