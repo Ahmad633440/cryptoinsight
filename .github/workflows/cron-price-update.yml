@@ -1,0 +1,17 @@
+name: Price Update Cron (Hourly)
+
+on:
+  schedule:
+    - cron: "0 * * * *" # Every hour
+  workflow_dispatch:
+
+jobs:
+  update-prices:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Price Update
+        run: |
+          curl -X GET \
+            'https://cryptoinsight-red.vercel.app/api/cron/price-update' \
+            -H "User-Agent: GitHub-Actions"
+        continue-on-error: true

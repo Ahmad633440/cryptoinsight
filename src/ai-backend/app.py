@@ -18,7 +18,7 @@ print("Gemini Key exists:", bool(os.getenv("GEMINI_KEY")))
 print("Groq Key exists:", bool(os.getenv("GROQ_KEY")))
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins="*")
 
 MONGODB_URL = os.getenv("MONGODB_URI")
 GEMINI_KEY = os.getenv("GEMINI_KEY")
@@ -76,7 +76,5 @@ def ask():
     answer = chain.invoke(user_question)
     return jsonify({"answer": answer})
 
-if __name__ == '__main__':
+if name == 'main':
     app.run(debug=False, threaded=True)
-
-

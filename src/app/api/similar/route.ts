@@ -2,6 +2,13 @@
 import { findSimilarNews } from "@/services/newsService";
 import { NextResponse } from "next/server";
 
+
+
+// GET /api/similar
+// GET /api/similar?page=1&limit=10&coin=bitcoin
+// Response format:
+// in this api u will get the latest news along with there Similar historical news in the form of array, 
+
 export async function GET(req: Request) {
   try {
     await connectDB();
