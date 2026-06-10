@@ -20,6 +20,9 @@ interface CoinGeckoMarket {
   price_change_percentage_24h: number;
   image: string;
   last_updated: string;
+  sparkline_in_7d?: {
+    price: number[];
+  };
 }
 
 // Helper to generate a hex color from string
@@ -46,7 +49,8 @@ export default function DashboardPage() {
   const fetchDashboardData = async (force = false) => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/dashboard${force ? '?force=true' : ''}`);
+      const url = force ? `/api/dashboard?force=true&t=${Date.now()}` : `/api/dashboard`;
+      const res = await fetch(url, { cache: 'no-store' });
       const json = await res.json();
       if (json.success) {
         setData(json.data);
@@ -64,6 +68,12 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchDashboardData();
+    
+    const intervalId = setInterval(() => {
+      fetchDashboardData(true);
+    }, 60000); // 1 minute
+    
+    return () => clearInterval(intervalId);
   }, []);
 
   if (loading && data.length === 0) {
@@ -173,18 +183,26 @@ export default function DashboardPage() {
     color: stringToColor(coin.symbol)
   }));
 
-  const tableData = data.slice(0, visibleCount).map((coin, index) => ({
-    rank: coin.market_cap_rank || (index + 1),
-    name: coin.name,
-    symbol: coin.symbol,
-    price: coin.current_price,
-    change1h: 0,
-    change24h: coin.price_change_percentage_24h || 0,
-    change7d: 0,
-    marketCap: coin.market_cap,
-    volume24h: coin.total_volume,
-    color: stringToColor(coin.symbol)
-  }));
+  const tableData = data.slice(0, visibleCount).map((coin, index) => {
+    const prices = coin.sparkline_in_7d?.price || [];
+    const change7d = prices.length > 1 && prices[0] !== 0
+      ? ((prices[prices.length - 1] - prices[0]) / prices[0]) * 100
+      : 0;
+
+    return {
+      rank: coin.market_cap_rank || (index + 1),
+      name: coin.name,
+      symbol: coin.symbol,
+      price: coin.current_price,
+      change1h: 0,
+      change24h: coin.price_change_percentage_24h || 0,
+      change7d: change7d,
+      marketCap: coin.market_cap,
+      volume24h: coin.total_volume,
+      color: stringToColor(coin.symbol),
+      sparkline: prices,
+    };
+  });
 
   return (
     <div className="px-3 sm:px-4 md:px-6 py-6 sm:py-8 md:py-10 space-y-8 sm:space-y-10 md:space-y-12 max-w-7xl mx-auto w-full min-w-0">

@@ -11,6 +11,9 @@ interface CoinGeckoMarket {
   price_change_percentage_24h: number;
   image: string;
   last_updated: string;
+  sparkline_in_7d?: {
+    price: number[];
+  };
 }
 
 /**
@@ -18,7 +21,7 @@ interface CoinGeckoMarket {
  * @returns Array of market data for top 100 coins
  * @throws Error if API key is expired/invalid or API call fails
  */
-export async function getLiveCoins(): Promise<CoinGeckoMarket[]> {
+export async function getLiveCoins(forceRefresh: boolean = false): Promise<CoinGeckoMarket[]> {
   const apiKey = process.env.COIN_GECKO_API_KEY;
   
   // Build URL with API key if available
@@ -28,19 +31,22 @@ export async function getLiveCoins(): Promise<CoinGeckoMarket[]> {
     order: 'market_cap_desc',
     per_page: '100', // Fetch 100 coins as requested
     page: '1',
-    sparkline: 'false',
+    sparkline: 'true',
     locale: 'en',
   });
 
   const url = apiKey ? `${baseUrl}?${params}&x_cg_demo_api_key=${apiKey}` : `${baseUrl}?${params}`;
  
-  ``
   try {
+    const fetchOptions: RequestInit = forceRefresh 
+      ? { cache: 'no-store' } 
+      : { next: { revalidate: 60 } };
+
     const res = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
       },
-      next: { revalidate: 60 }, // Cache for 60 seconds
+      ...fetchOptions,
     });
 
     // Check for authentication errors

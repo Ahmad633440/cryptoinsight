@@ -45,22 +45,22 @@ export default function NewsIntelligencePage() {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12 space-y-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8 sm:space-y-12">
       {/* Page Header */}
-      <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-zinc-800 pb-12">
-        <div className="space-y-4">
+      <header className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 border-b border-zinc-800 pb-8 sm:pb-12">
+        <div className="space-y-3 sm:space-y-4">
           <Badge variant="blue" className="px-3 py-1 text-[10px] uppercase font-bold tracking-widest">
             Intelligence AI
           </Badge>
-          <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-white tracking-tighter">
             News <span className="text-gradient">Insights</span>
           </h1>
-          <p className="text-zinc-500 max-w-xl text-lg font-medium leading-relaxed">
+          <p className="text-zinc-500 max-w-xl text-sm sm:text-lg font-medium leading-relaxed">
             Direct access to institutional-grade crypto intelligence, simplified for real-time analysis.
           </p>
         </div>
         
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
           <div className="text-right hidden md:block">
             <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-[0.2em] mb-1">Total Signals</p>
             <p className="text-sm text-white font-mono bg-zinc-900 px-3 py-1 rounded-md border border-zinc-800">
