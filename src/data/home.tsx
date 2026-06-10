@@ -115,6 +115,6 @@ export const MARKET_GROWTH = {
     { year: "2020", users: "150M", height: "30%" },
     { year: "2022", users: "320M", height: "50%" },
     { year: "2024", users: "580M", height: "75%" },
-    { year: "May 2026", users: "900M+", height: "100%" }
+    { year: "2026", users: "900M+", height: "100%" }
   ]
 };

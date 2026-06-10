@@ -107,6 +107,56 @@
   margin: 0;
 }
 
+/* ---- Market Data Panels ---- */
+.news-card__market-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+.news-card__market-panel {
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: rgba(24, 24, 27, 0.6);
+  border: 1px solid rgba(63, 63, 70, 0.3);
+  transition: border-color 0.3s ease;
+}
+
+.news-card__market-panel:hover {
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.news-card__market-panel--live {
+  background: rgba(16, 185, 129, 0.04);
+  border-color: rgba(16, 185, 129, 0.12);
+}
+
+.news-card__market-panel--live:hover {
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.news-card__market-panel--snapshot {
+  background: rgba(245, 158, 11, 0.04);
+  border-color: rgba(245, 158, 11, 0.1);
+}
+
+.news-card__market-panel--snapshot:hover {
+  border-color: rgba(245, 158, 11, 0.25);
+}
+
+@media (min-width: 640px) {
+  .news-card__market-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .news-card__market-panel {
+    flex: 1;
+    min-width: 200px;
+  }
+}
+
 /* ---- Actions ---- */
 .news-card__actions {
   display: flex;

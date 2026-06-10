@@ -26,7 +26,7 @@ export async function GET(request: Request) {
     const forceRefresh = searchParams.get("force") === "true";
 
     // If force refresh is requested, bypass cache (handled by fetch next: { revalidate })
-    const coins = await getLiveCoins();
+    const coins = await getLiveCoins(forceRefresh);
 
     if (!coins || coins.length === 0) {
       return NextResponse.json(

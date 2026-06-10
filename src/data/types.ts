@@ -32,10 +32,50 @@ export interface EnrichedNewsArticle {
   title: string;
   content?: string;
   coin?: string;
+  coins?: {
+    symbol: string;
+    coinId: string;
+    confidence: "high" | "medium" | "low";
+    score: number;
+  }[];
+  category?: string;
   source?: string;
   sentiment?: string;
   publishedAt: string;
   url: string;
+  isEnriched?: boolean;
+  isEmbedded?: boolean;
+  coinsDetected?: boolean;
+  enrichedAt?: string;
+  priceUpdatedAt?: string;
+  coinsDetectedAt?: string;
+  priceAfter?: number;
+  marketCapAfter?: number;
+  volume24hAfter?: number;
+  marketSnapshot?: {
+    openPrice?: number;
+    highPrice?: number;
+    lowPrice?: number;
+    closePrice?: number;
+    volume?: number;
+    priceMovement?: number;
+    marketDirection?: string;
+  };
+  stored?: {
+    priceBefore?: number;
+    marketCapBefore?: number;
+    volume24hBefore?: number;
+    priceAfter?: number;
+    priceChangePercent?: number;
+    enrichedAt?: string;
+  };
+  live?: {
+    currentPrice?: number;
+    currentMarketCap?: number;
+    currentVolume24h?: number;
+    percentChange24h?: number;
+    lastUpdated?: string;
+  } | null;
 }
 
 export interface CoinQuote {

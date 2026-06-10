@@ -143,7 +143,7 @@ export default function HomePage() {
                 <div className="px-4 py-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xl font-bold">
                   900M+
                 </div>
-                <span className="text-xs text-zinc-600 font-medium uppercase tracking-widest">Global Users<br/>by May 2026</span>
+                <span className="text-xs text-zinc-600 font-medium uppercase tracking-widest">Global Users<br/> 2026</span>
               </div>
             </div>
 
