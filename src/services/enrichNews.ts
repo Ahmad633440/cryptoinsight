@@ -89,7 +89,7 @@ export const enrichSingleNews = async (newsId: string): Promise<{ success: boole
       news.enrichedAt = new Date();
       await news.save();
       console.log(`[ENRICHMENT] General news (no coin detected), marked as enriched: ${newsId}`);
-      return { success: false, error: "No coin detected (general news)" };
+      return { success: true };
     }
 
     // Step 2: Validate coin exists in CoinMarketCap
@@ -102,7 +102,7 @@ export const enrichSingleNews = async (newsId: string): Promise<{ success: boole
       console.warn(
         `[ENRICHMENT] Coin ${primaryCoin.symbol} not found in CoinMarketCap, marked as enriched without data: ${newsId}`
       );
-      return { success: false, error: "Coin not found in CMC" };
+      return { success: true };
     }
 
     // Step 3: Fetch current market data
