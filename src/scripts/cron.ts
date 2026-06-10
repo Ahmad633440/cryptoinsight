@@ -18,9 +18,9 @@ import cron from "node-cron";
 // npx tsx src/scripts/cron.ts
 
 
-// Job 1: News sync - every 30 minutes
+// Job 1: News sync
 // Fetches news from API and stores with immediate coin detection
-cron.schedule("*/10 * * * *", async () => {
+cron.schedule("*/0 * * * *", async () => {
   try {
     console.log("[CRON] ========== News sync ==========");
     const result = await syncNews();
@@ -34,7 +34,9 @@ cron.schedule("*/10 * * * *", async () => {
 // Job 2: Coin detection - every 10 minutes
 // Detects coins for OLD news that don't have coin data yet
 // (for legacy articles created before coin detection was added)
-cron.schedule("*/5 * * * *", async () => {
+
+//cron.schedule("*/5 * * * *", async () => {
+  /*
   try {
     console.log("[CRON] ========== Coin detection (legacy data) ==========");
     const result = await detectCoinsForLegacyNews(100);
@@ -49,9 +51,12 @@ cron.schedule("*/5 * * * *", async () => {
   }
 });
 
+*/
+
 // Job 3: Price update - every hour
 // Captures market data 24 hours after article published
 // Stores priceAfter, marketCapAfter, volume24hAfter
+/*
 cron.schedule("0 * * * *", async () => {
   try {
     console.log("[CRON] ========== Price update (24h after publish) ==========");
@@ -66,5 +71,7 @@ cron.schedule("0 * * * *", async () => {
     console.error("[CRON] ❌ Price update failed:", error);
   }
 });
+
+*/
 
 export default cron;
