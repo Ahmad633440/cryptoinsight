@@ -59,11 +59,16 @@ export const getQuotes = async (symbols: string[]): Promise<Map<string, CoinQuot
       },
     });
 
-    const data = response.data.data;
+    const data = response.data?.data || {};
     const quoteMap = new Map<string, CoinQuote>();
 
     for (const [symbol, coinData] of Object.entries(data)) {
-      const quote = (coinData as any).quote.USD;
+      const quote = (coinData as any)?.quote?.USD;
+      if (!quote) {
+        console.warn(`Skipping ${symbol}: missing USD quote from CoinMarketCap response`);
+        continue;
+      }
+
       quoteMap.set(symbol, {
         id: (coinData as any).id,
         symbol: symbol,

@@ -18,9 +18,9 @@ import cron from "node-cron";
 // npx tsx src/scripts/cron.ts
 
 
-// Job 1: News sync
+// Job 1: News sync - once daily
 // Fetches news from API and stores with immediate coin detection
-cron.schedule("*/0 * * * *", async () => {
+cron.schedule("0 0 * * *", async () => {
   try {
     console.log("[CRON] ========== News sync ==========");
     const result = await syncNews();
