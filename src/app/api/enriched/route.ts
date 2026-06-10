@@ -23,9 +23,9 @@ export async function GET(request: Request) {
     const coin = searchParams.get("coin");
     const includeLive = searchParams.get("live") !== "false"; // Default: include live data
 
-    // Build query
+    // Build query - return only enriched articles by default
     const query: Record<string, any> = {
-      isEnriched: true,
+      // isEnriched: true,
     };
     if (coin) {
       query.coin = coin.toUpperCase();
@@ -68,7 +68,7 @@ export async function GET(request: Request) {
       }
     }
 
-    // Merge stored and live data
+    // Merge stored and live data 
     const enrichedNews = newsArticles.map((article: any) => {
       const stored = {
         priceBefore: article.priceBefore,
