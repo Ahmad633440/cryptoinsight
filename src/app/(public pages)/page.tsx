@@ -11,12 +11,7 @@ export default function HomePage() {
           SECTION 1 — Hero
           ────────────────────────────────────────────────────────── */}
       <section className="w-full flex flex-col items-center justify-center py-24 px-6 text-center animate-fade-up">
-        <div className="mb-8">
-          <Badge variant="yellow" className="py-1.5 px-4 rounded-full border-yellow-500/30">
-            {HERO_CONTENT.badge}
-          </Badge>
-        </div>
-        
+       
         <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight mb-6 max-w-4xl leading-[1.1]">
           {HERO_CONTENT.title.main} <span className="text-gradient">{HERO_CONTENT.title.highlight}</span> {HERO_CONTENT.title.suffix}
         </h1>

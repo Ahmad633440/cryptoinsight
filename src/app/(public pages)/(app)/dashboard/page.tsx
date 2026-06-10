@@ -324,12 +324,7 @@ export default function DashboardPage() {
               >
                 Ask the AI
               </a>
-              <a
-                href="/risk"
-                className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 rounded-2xl border border-zinc-800 text-zinc-400 font-bold text-xs sm:text-sm hover:bg-zinc-800 hover:text-white transition-all text-center"
-              >
-                Understand Risks
-              </a>
+             
             </div>
           </div>
         </Card>

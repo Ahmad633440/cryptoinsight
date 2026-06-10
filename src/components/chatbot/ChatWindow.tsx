@@ -160,12 +160,7 @@ export default function ChatWindow() {
             <h3 className="text-sm md:text-base font-bold text-zinc-100">
               CryptoInsight AI
             </h3>
-            <div className="flex items-center gap-1 md:gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse-live" />
-              <span className="text-[9px] md:text-[10px] text-zinc-400 font-medium uppercase tracking-wider">
-                Live Analysis Active
-              </span>
-            </div>
+            {/* Removed Live Analysis indicator */}
           </div>
         </div>
 

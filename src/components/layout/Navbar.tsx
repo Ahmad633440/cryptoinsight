@@ -68,30 +68,8 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* ── Search ────────────────────────── */}
-        <div className="hidden md:flex items-center gap-2.5 bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-2.5 w-80 focus-within:border-indigo-500/50 focus-within:ring-1 focus-within:ring-indigo-500/20 transition-all">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#71717a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          <input
-            type="text"
-            placeholder="Search coins, news, markets..."
-            className="bg-transparent text-sm text-zinc-300 placeholder-zinc-600 outline-none w-full"
-          />
-          <kbd className="hidden lg:inline-flex items-center gap-0.5 rounded-md border border-zinc-700 bg-zinc-800 px-1.5 py-0.5 text-[10px] font-mono text-zinc-500">
-            ⌘K
-          </kbd>
-        </div>
-
         {/* ── Actions ───────────────────── */}
         <div className="flex items-center gap-3">
-          {/* Live indicator */}
-          <div className="hidden sm:flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-1.5">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse-live" />
-            <span className="text-xs font-medium text-emerald-400">Live</span>
-          </div>
-
           {/* Mobile Menu Toggle */}
           <button 
             className="lg:hidden p-2 text-zinc-400 hover:text-white transition-colors"
