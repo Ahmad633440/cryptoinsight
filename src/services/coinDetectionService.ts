@@ -17,6 +17,7 @@ import { connectDB } from "@/lib/db";
 /**
  * Auto-detect coins for a single news article
  * Updates coins array in the document
+ * Also triggers immediate enrichment if coins are detected
  * @param newsId - MongoDB news document ID
  * @returns Success status and detected coins
  */
@@ -57,6 +58,29 @@ export const detectCoinsForNews = async (
       console.log(
         `[COIN DETECTION] News ${newsId}: Detected coins: ${coinSymbols}`
       );
+      
+      // Trigger immediate enrichment for the primary coin
+      try {
+        const { enrichNewsImmediately } = await import("./immediateEnrichmentService");
+        const enrichResult = await enrichNewsImmediately(
+          newsId,
+          detectedCoins[0].symbol
+        );
+        if (enrichResult.success) {
+          console.log(
+            `[COIN DETECTION → ENRICHMENT] ✅ Enriched news ${newsId} with ${detectedCoins[0].symbol}`
+          );
+        } else {
+          console.warn(
+            `[COIN DETECTION → ENRICHMENT] ⚠️ Enrichment failed for ${newsId}: ${enrichResult.error}`
+          );
+        }
+      } catch (enrichError) {
+        console.error(
+          `[COIN DETECTION → ENRICHMENT] ❌ Enrichment error for ${newsId}:`,
+          enrichError
+        );
+      }
     } else {
       console.log(`[COIN DETECTION] News ${newsId}: No coins detected`);
     }
