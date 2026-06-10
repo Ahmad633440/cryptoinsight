@@ -60,6 +60,7 @@ export default function NewsIntelligencePage() {
           </p>
         </div>
         
+        {/* 
         <div className="flex items-center gap-3 sm:gap-4">
           <div className="text-right hidden md:block">
             <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-[0.2em] mb-1">Total Signals</p>
@@ -78,6 +79,7 @@ export default function NewsIntelligencePage() {
             </svg>
           </button>
         </div>
+        */}
       </header>
 
       {/* Main Content Area */}

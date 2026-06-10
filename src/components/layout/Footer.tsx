@@ -8,10 +8,10 @@ const FOOTER_LINKS = {
     { label: "AI Chatbot", href: "/chatbot" },
   ],
   Resources: [
-    { label: "Documentation", href: "#" },
-    { label: "API Reference", href: "#" },
-    { label: "Changelog", href: "#" },
-    { label: "Status", href: "#" },
+    { label: "CoinMarketCap", href: "https://coinmarketcap.com" },
+    { label: "CoinGecko", href: "https://www.coingecko.com" },
+    { label: "Binance", href: "https://www.binance.com" },
+    { label: "TradingView", href: "https://www.tradingview.com" },
   ],
   Company: [
     { label: "About", href: "#" },

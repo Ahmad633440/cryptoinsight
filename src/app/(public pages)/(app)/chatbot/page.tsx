@@ -29,18 +29,8 @@ export default function ChatbotPage() {
 
       {/* Footer badges */}
       <div className="shrink-0 flex flex-wrap justify-center gap-2 md:gap-6 text-[8px] md:text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-500 py-2 md:py-3 animate-fade-in">
-        <div className="flex items-center gap-1.5">
-          <span className="w-1 h-1 rounded-full bg-indigo-500" />
-          Real-time Pricing
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-1 h-1 rounded-full bg-indigo-500" />
-          Technical Indicators
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-1 h-1 rounded-full bg-indigo-500" />
-          Sentiment Analysis
-        </div>
+        {/* Removed Real-time Pricing and Technical Indicators */}
+       
       </div>
     </div>
   );
