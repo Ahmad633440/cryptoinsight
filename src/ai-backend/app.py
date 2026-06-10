@@ -1,5 +1,5 @@
 
-from os import name
+
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_mongodb import MongoDBAtlasVectorSearch
 from langchain_groq import ChatGroq
@@ -77,5 +77,5 @@ def ask():
     answer = chain.invoke(user_question)
     return jsonify({"answer": answer})
 
-if name == 'main':
+if __name__ == '__main__':
     app.run(debug=False, threaded=True)
