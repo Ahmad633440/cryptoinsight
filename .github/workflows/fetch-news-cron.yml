@@ -1,0 +1,60 @@
+name: Fetch Crypto News - Every 30 Minutes
+
+on:
+  schedule:
+    # Run every 30 minutes
+    - cron: "*/30 * * * *"
+  workflow_dispatch: # Allow manual trigger for testing
+
+jobs:
+  fetch-news:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Fetch news from API endpoint
+        id: fetch
+        run: |
+          echo "Fetching crypto news at $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+
+          # Call the Vercel API endpoint
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            -X GET \
+            -H "Accept: application/json" \
+            "${{ secrets.VERCEL_API_ENDPOINT }}/api/cron/news-sync")
+
+          # Split response and status code
+          STATUS_CODE=$(echo "$RESPONSE" | tail -n 1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+
+          echo "Status: $STATUS_CODE"
+          echo "Response: $BODY"
+
+          # Check status
+          if [ "$STATUS_CODE" -ge 200 ] && [ "$STATUS_CODE" -lt 300 ]; then
+            echo "✅ News fetch successful"
+            echo "status=success" >> $GITHUB_OUTPUT
+            
+            # Parse response to show stats
+            echo "$BODY" | jq '.synced, .failed' || echo "Response body: $BODY"
+          else
+            echo "❌ News fetch failed with status $STATUS_CODE"
+            echo "status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Log execution status
+        if: always()
+        run: |
+          echo "Cron job execution: ${{ steps.fetch.outputs.status }}"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+
+          if [ "${{ steps.fetch.outputs.status }}" != "success" ]; then
+            echo "⚠️ Consider checking your Vercel deployment and API endpoint"
+          fi
+
+      - name: Notify on failure (optional)
+        if: failure()
+        run: |
+          echo "❌ Failed to fetch news at $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          # You can add additional notification logic here (e.g., send Slack message)
