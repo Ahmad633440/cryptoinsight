@@ -1,5 +1,4 @@
 import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import ChatbotFAB from "@/components/layout/ChatbotFAB";
 
 export default function PublicLayout({

@@ -3,8 +3,6 @@
 import React, { useState, useEffect } from "react";
 import ComparisonRow from "./ComparisonRow";
 import ComparisonModal from "./ComparisonModal";
-import Loader from "@/components/ui/Loader";
-import Badge from "@/components/ui/Badge";
 import "./comparison.css";
 
 interface SimilarHistoricalItem {

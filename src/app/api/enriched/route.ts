@@ -12,16 +12,25 @@ import { getQuotes } from "@/lib/coinMarketCap";
 import { NextResponse } from "next/server";
 import { CoinQuote } from "@/data/types";
 
+import { getCached, setCached } from "@/lib/apiCache";
+
 export async function GET(request: Request) {
   try {
-    await connectDB();
-
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get("limit") || "20");
     const page = parseInt(searchParams.get("page") || "1");
     const skip = (page - 1) * limit;
     const coin = searchParams.get("coin");
     const includeLive = searchParams.get("live") !== "false"; // Default: include live data
+
+    // Check cache
+    const cacheKey = `enriched_page_${page}_limit_${limit}_coin_${coin || "all"}_live_${includeLive}`;
+    const cachedResponse = getCached(cacheKey);
+    if (cachedResponse) {
+      return NextResponse.json(cachedResponse);
+    }
+
+    await connectDB();
 
     // Build query - return only enriched articles by default
     const query: Record<string, any> = {
@@ -42,7 +51,7 @@ export async function GET(request: Request) {
 
     // If live data not requested, return stored data only
     if (!includeLive) {
-      return NextResponse.json({
+      const responseData = {
         success: true,
         data: newsArticles,
         meta: {
@@ -51,7 +60,9 @@ export async function GET(request: Request) {
           limit,
           liveData: false,
         },
-      });
+      };
+      setCached(cacheKey, responseData, 60000); // Cache for 60 seconds
+      return NextResponse.json(responseData);
     }
 
     // Get unique coins from news articles
@@ -96,7 +107,7 @@ export async function GET(request: Request) {
       };
     });
 
-    return NextResponse.json({
+    const responseData = {
       success: true,
       data: enrichedNews,
       meta: {
@@ -104,7 +115,10 @@ export async function GET(request: Request) {
         liveData: true,
         coinsQueried: uniqueCoins.length,
       },
-    });
+    };
+    setCached(cacheKey, responseData, 30000); // Cache for 30 seconds
+
+    return NextResponse.json(responseData);
 
   } catch (error) {
     console.error("Error fetching news:", error);

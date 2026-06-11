@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import Badge from "@/components/ui/Badge";
 import { EnrichedNewsArticle } from "@/data/types";
 import { formatRelativeTime } from "@/lib/utils";
 import "./news-card.css";

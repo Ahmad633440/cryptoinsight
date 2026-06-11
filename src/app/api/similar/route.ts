@@ -1,4 +1,4 @@
-﻿import { connectDB } from "@/lib/db";
+import { connectDB } from "@/lib/db";
 import { findSimilarNews } from "@/services/newsService";
 import { NextResponse } from "next/server";
 
@@ -9,10 +9,10 @@ import { NextResponse } from "next/server";
 // Response format:
 // in this api u will get the latest news along with there Similar historical news in the form of array, 
 
+import { getCached, setCached } from "@/lib/apiCache";
+
 export async function GET(req: Request) {
   try {
-    await connectDB();
-
     const url = new URL(req.url);
     const pageParam = url.searchParams.get("page");
     const limitParam = url.searchParams.get("limit");
@@ -31,7 +31,19 @@ export async function GET(req: Request) {
       );
     }
 
+    // Check cache
+    const cacheKey = `similar_page_${page}_limit_${limit}_coin_${coinParam || "all"}`;
+    const cachedResponse = getCached(cacheKey);
+    if (cachedResponse) {
+      return NextResponse.json(cachedResponse, { status: 200 });
+    }
+
+    await connectDB();
+
     const response = await findSimilarNews({ page, limit, coin: coinParam });
+
+    // Store in cache for 2 minutes (120 seconds)
+    setCached(cacheKey, response, 120000);
 
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
