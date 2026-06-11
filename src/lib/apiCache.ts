@@ -18,7 +18,7 @@ export function getCached<T>(key: string): T | null {
     return null;
   }
   
-  return entry.value;
+  return entry.value as T;
 }
 
 /**
