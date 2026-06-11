@@ -5,6 +5,7 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     const backendUrl = process.env.PYTHON_BACKEND_URL || 'http://127.0.0.1:5000';
+    console.log('[API] Connecting to chatbot backend at:', backendUrl);
     const response = await fetch(`${backendUrl}/ask`, {
       method: 'POST',
       headers: {
