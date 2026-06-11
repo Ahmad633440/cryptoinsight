@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Card from "@/components/ui/Card";
-import Badge from "@/components/ui/Badge";
 import Footer from "@/components/layout/Footer";
 import { HERO_CONTENT, FEATURES, SECTION_TITLES, AI_CTA, CRYPTO_INFO, MARKET_GROWTH } from "@/data/home";
 
@@ -87,7 +86,7 @@ export default function HomePage() {
               {CRYPTO_INFO.subtitle}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
-              {CRYPTO_INFO.items.map((item, i) => (
+              {CRYPTO_INFO.items.map((item) => (
                 <div key={item.title} className="space-y-3 group">
                   <div className="flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-cyan-500 shadow-[0_0_10px_#06b6d4]" />
@@ -143,7 +142,7 @@ export default function HomePage() {
             </div>
 
             <div className="flex-grow w-full flex items-end justify-between gap-2 sm:gap-4 h-64">
-              {MARKET_GROWTH.stats.map((stat, i) => (
+              {MARKET_GROWTH.stats.map((stat) => (
                 <div key={stat.year} className="flex flex-col items-center gap-4 flex-1 group">
                   <div className="relative w-full flex flex-col items-center justify-end h-48">
                     {/* Tooltip */}

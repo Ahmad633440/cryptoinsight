@@ -35,7 +35,7 @@ export default function NewsIntelligencePage() {
       } else {
         setError(result.message || "Failed to load news");
       }
-    } catch (err) {
+    } catch {
       setError("An error occurred while fetching news");
     } finally {
       setIsLoading(false);
@@ -59,27 +59,6 @@ export default function NewsIntelligencePage() {
             Direct access to institutional-grade crypto intelligence, simplified for real-time analysis.
           </p>
         </div>
-        
-        {/* 
-        <div className="flex items-center gap-3 sm:gap-4">
-          <div className="text-right hidden md:block">
-            <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-[0.2em] mb-1">Total Signals</p>
-            <p className="text-sm text-white font-mono bg-zinc-900 px-3 py-1 rounded-md border border-zinc-800">
-              {totalItems}
-            </p>
-          </div>
-          <button 
-            onClick={() => fetchNews(currentPage)}
-            className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white transition-all hover:bg-zinc-800 active:scale-95"
-            title="Refresh news"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
-              <path d="M21 3v5h-5" />
-            </svg>
-          </button>
-        </div>
-        */}
       </header>
 
       {/* Main Content Area */}

@@ -59,7 +59,7 @@ export default function DashboardPage() {
       } else {
         setError(json.message || "Failed to fetch data");
       }
-    } catch (err) {
+    } catch {
       setError("An error occurred while fetching dashboard data.");
     } finally {
       setLoading(false);
@@ -107,6 +107,16 @@ export default function DashboardPage() {
   // Calculate stats
   const totalMarketCap = data.reduce((acc, coin) => acc + coin.market_cap, 0);
   const totalVolume = data.reduce((acc, coin) => acc + coin.total_volume, 0);
+
+  // Calculate market-cap weighted price change percentage as an estimate for total market cap change
+  const weightedCapChange = totalMarketCap > 0
+    ? data.reduce((acc, coin) => acc + (coin.price_change_percentage_24h || 0) * coin.market_cap, 0) / totalMarketCap
+    : 0;
+
+  // Calculate volume weighted price change percentage
+  const weightedVolumeChange = totalVolume > 0
+    ? data.reduce((acc, coin) => acc + (coin.price_change_percentage_24h || 0) * coin.total_volume, 0) / totalVolume
+    : 0;
   
   // Find top gainer
   const sortedByChange = [...data].sort((a, b) => (b.price_change_percentage_24h || 0) - (a.price_change_percentage_24h || 0));
@@ -116,8 +126,8 @@ export default function DashboardPage() {
     {
       label: "Total Market Cap",
       value: totalMarketCap >= 1e12 ? `$${(totalMarketCap / 1e12).toFixed(2)}T` : `$${(totalMarketCap / 1e9).toFixed(2)}B`,
-      change: "+0.0%",
-      positive: true,
+      change: `${weightedCapChange >= 0 ? "+" : ""}${weightedCapChange.toFixed(2)}%`,
+      positive: weightedCapChange >= 0,
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /><path d="M2 12h20" />
@@ -127,8 +137,8 @@ export default function DashboardPage() {
     {
       label: "24h Volume",
       value: totalVolume >= 1e9 ? `$${(totalVolume / 1e9).toFixed(2)}B` : `$${(totalVolume / 1e6).toFixed(2)}M`,
-      change: "+0.0%", 
-      positive: true,
+      change: `${weightedVolumeChange >= 0 ? "+" : ""}${weightedVolumeChange.toFixed(2)}%`, 
+      positive: weightedVolumeChange >= 0,
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M3 3v18h18" /><path d="M18 17V9" /><path d="M13 17V5" /><path d="M8 17v-3" />
