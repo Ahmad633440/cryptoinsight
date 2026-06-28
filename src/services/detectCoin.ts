@@ -4,7 +4,7 @@
  */
 
 import { DetectedCoin, DetectedCoinData } from "@/data/types";
-import { getQuoteBySymbol } from "@/lib/coinMarketCap";
+import { getQuoteBySymbol } from "@/lib/coingecko";
 
 /**
  * Coin definitions

@@ -10,8 +10,6 @@
  */
 
 import { syncNews } from "@/controllers/fetchNews";
-import { updatePricesAfter24h } from "@/services/updateAfter24h";
-import { detectCoinsForLegacyNews } from "@/services/coinDetectionService";
 import cron from "node-cron";
 
 
@@ -53,25 +51,5 @@ cron.schedule("0 0 * * *", async () => {
 
 */
 
-// Job 3: Price update - every hour
-// Captures market data 24 hours after article published
-// Stores priceAfter, marketCapAfter, volume24hAfter
-/*
-cron.schedule("0 * * * *", async () => {
-  try {
-    console.log("[CRON] ========== Price update (24h after publish) ==========");
-    const result = await updatePricesAfter24h(50);
-    console.log(
-      `[CRON] Success: ${result.success}, Failed: ${result.failed}, Skipped: ${result.skipped}`
-    );
-    if (result.errors.length > 0) {
-      console.error("[CRON] ❌ Errors:", result.errors.slice(0, 3));
-    }
-  } catch (error) {
-    console.error("[CRON] ❌ Price update failed:", error);
-  }
-});
-
-*/
 
 export default cron;
