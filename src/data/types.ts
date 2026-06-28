@@ -67,6 +67,7 @@ export interface EnrichedNewsArticle {
     volume24hBefore?: number;
     priceAfter?: number;
     priceChangePercent?: number;
+    impactDurationHours?: number;
     enrichedAt?: string;
   };
   live?: {

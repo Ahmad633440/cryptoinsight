@@ -8,7 +8,7 @@
 
 import { connectDB } from "@/lib/db";
 import News from "@/models/news";
-import { getQuotes } from "@/lib/coinMarketCap";
+import { getQuotes } from "@/lib/coingecko";
 import { NextResponse } from "next/server";
 import { CoinQuote } from "@/data/types";
 
@@ -87,6 +87,7 @@ export async function GET(request: Request) {
         volume24hBefore: article.volume24hBefore,
         priceAfter: article.priceAfter,
         priceChangePercent: article.priceChangePercent,
+        impactDurationHours: article.impactDurationHours,
         enrichedAt: article.enrichedAt,
       };
 

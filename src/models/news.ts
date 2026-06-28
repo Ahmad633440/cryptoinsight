@@ -37,28 +37,17 @@ const NewsSchema = new mongoose.Schema({
     default: false,
   },
 
-  // Market data from CoinMarketCap (stored 24 hours after article was published)
-  priceAfter: Number,          // Price snapshot 24 hours later
-  marketCapAfter: Number,      // Market cap snapshot 24 hours later
-  volume24hAfter: Number,      // Trading volume 24 hours later
-marketSnapshot: {
-  openPrice: { type: Number, required: false },
-  highPrice: { type: Number },
-  lowPrice: { type: Number },
-  closePrice: { type: Number },
-  volume: { type: Number },
-  priceMovement: { type: Number },
-  marketDirection: { type: String }
-
-},
+  // Enrichment snapshot
+  priceBefore: Number,
+  priceChangePercent: Number,
+  impactDurationHours: Number,
 
   // Enrichment tracking
   isEnriched: {
     type: Boolean,
     default: false,
   },
-  enrichedAt: Date,      // When market data was fetched (immediately after coin detection)
-  priceUpdatedAt: Date,  // When 24h price update was recorded
+  enrichedAt: Date,
   
   // Coin detection tracking
   coinsDetectedAt: Date, // When coins were auto-detected
@@ -70,7 +59,6 @@ marketSnapshot: {
 
 // Index for efficient queries
 NewsSchema.index({ coin: 1, isEnriched: 1, publishedAt: -1 });
-NewsSchema.index({ priceUpdatedAt: 1 });
 NewsSchema.index({ coinsDetected: 1, coinsDetectedAt: 1 }); // For background worker
 
 export default mongoose.models.News || mongoose.model("News", NewsSchema);

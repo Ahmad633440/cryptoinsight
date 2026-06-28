@@ -17,7 +17,7 @@
 
 import News from "@/models/news";
 import { detectCoin, validateCoin } from "./detectCoin";
-import { getQuoteBySymbol } from "@/lib/coinMarketCap";
+import { getQuoteBySymbol } from "@/lib/coingecko";
 import { CoinQuote, EnrichmentResult } from "@/data/types";
 
 /**
@@ -92,7 +92,7 @@ export const enrichSingleNews = async (newsId: string): Promise<{ success: boole
       return { success: true };
     }
 
-    // Step 2: Validate coin exists in CoinMarketCap
+    // Step 2: Validate coin exists in CoinGecko
     const isValid = await validateCoin(primaryCoin.symbol);
     if (!isValid) {
       // Edge case: Coin mentioned but not in CoinMarketCap (invalid/new coin)
@@ -100,7 +100,7 @@ export const enrichSingleNews = async (newsId: string): Promise<{ success: boole
       news.enrichedAt = new Date();
       await news.save();
       console.warn(
-        `[ENRICHMENT] Coin ${primaryCoin.symbol} not found in CoinMarketCap, marked as enriched without data: ${newsId}`
+        `[ENRICHMENT] Coin ${primaryCoin.symbol} not found in CoinGecko, marked as enriched without data: ${newsId}`
       );
       return { success: true };
     }
@@ -122,11 +122,10 @@ export const enrichSingleNews = async (newsId: string): Promise<{ success: boole
     news.coin = primaryCoin.symbol; // Update legacy field for backward compatibility
     news.coinId = marketData.id;
     news.priceBefore = marketData.price;
-    news.marketCapBefore = marketData.marketCap;
-    news.volume24hBefore = marketData.volume24h;
+    news.priceChangePercent = marketData.percentChange24h ?? 0;
+    news.impactDurationHours = 24;
     news.isEnriched = true;
     news.enrichedAt = new Date();
-    news.priceUpdatedAt = new Date(); // Schedule for price update in 24h
 
     await news.save();
 
@@ -192,23 +191,6 @@ export const enrichNews = async (limit: number = 50): Promise<EnrichmentResult> 
     result.errors.push(`Process error: ${errorMessage}`);
     return result;
   }
-};
-
-/**
- * Get news articles pending price update (24h after enrichment)
- */
-export const getNewsPendingPriceUpdate = async (): Promise<typeof News[]> => {
-  const { connectDB } = await import("@/lib/db");
-  await connectDB();
-
-  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-
-  return News.find({
-    isEnriched: true,
-    priceAfter: { $exists: false },
-    priceUpdatedAt: { $lte: twentyFourHoursAgo },
-    coin: { $exists: true, $ne: null },
-  }).lean();
 };
 
 export default enrichNews;
