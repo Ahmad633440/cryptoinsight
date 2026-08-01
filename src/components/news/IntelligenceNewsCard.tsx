@@ -132,79 +132,12 @@ export default function IntelligenceNewsCard({ article, onExpand }: Intelligence
 
         {/* Content preview */}
         <p className="news-card__body">
-          {article.content || "No detailed content available for this article."}
+          {article.content ? article.content.replace(/ONLY AVAILABLE IN PAID PLANS/gi, '').trim() : "No detailed content available for this article."}
         </p>
 
-        {/* ── Detected Coins Pills ── */}
-        {hasCoins && (
-          <div className="flex flex-wrap gap-1.5 pt-1">
-            <span className="text-[9px] text-zinc-600 font-bold uppercase tracking-widest mr-1 self-center">Detected:</span>
-            {article.coins!.map((c, i) => (
-              <span
-                key={i}
-                className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md border ${confidenceColor(c.confidence)}`}
-              >
-                {c.symbol}
-                <span className="opacity-60 text-[8px]">({c.confidence})</span>
-              </span>
-            ))}
-          </div>
-        )}
-
         {/* ── Market Data Panels ── */}
-        {(hasStoredData || hasLiveData || hasSnapshot) && (
+        {hasLiveData && (
           <div className="news-card__market-grid">
-            {/* Stored: Before/After */}
-            {hasStoredData && (
-              <div className="news-card__market-panel">
-                <div className="flex items-center gap-1.5 mb-2">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-blue-400">
-                    <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
-                  </svg>
-                  <span className="text-[9px] font-black text-blue-400 uppercase tracking-[0.15em]">Snapshot Data</span>
-                </div>
-
-                <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
-                  <div className="flex flex-col">
-                    <span className="text-[8px] text-zinc-600 uppercase font-bold tracking-wider">Price Before</span>
-                    <span className="font-mono text-[11px] text-zinc-300">{formatPrice(article.stored!.priceBefore)}</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[8px] text-zinc-600 uppercase font-bold tracking-wider">Price After</span>
-                    <span className="font-mono text-[11px] text-zinc-300">{formatPrice(article.stored!.priceAfter)}</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[8px] text-zinc-600 uppercase font-bold tracking-wider">Mkt Cap</span>
-                    <span className="font-mono text-[11px] text-zinc-300">{formatLargeNumber(article.stored!.marketCapBefore)}</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[8px] text-zinc-600 uppercase font-bold tracking-wider">Vol 24h</span>
-                    <span className="font-mono text-[11px] text-zinc-300">{formatLargeNumber(article.stored!.volume24hBefore)}</span>
-                  </div>
-                </div>
-
-                {/* Price change highlight */}
-                {storedChange !== undefined && (
-                  <div className={`mt-2 flex items-center gap-1.5 px-2 py-1 rounded-lg ${storedIsUp ? 'bg-emerald-500/10' : storedIsDown ? 'bg-red-500/10' : 'bg-zinc-800/40'}`}>
-                    {storedIsUp && (
-                      <svg className="h-3.5 w-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                      </svg>
-                    )}
-                    {storedIsDown && (
-                      <svg className="h-3.5 w-3.5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                      </svg>
-                    )}
-                    <span className={`text-xs font-black ${storedIsUp ? 'text-emerald-400' : storedIsDown ? 'text-red-400' : 'text-zinc-400'}`}>
-                      {formatPercent(storedChange)}
-                    </span>
-                    <span className="text-[8px] text-zinc-500 font-bold uppercase ml-auto">Impact</span>
-                  </div>
-                )}
-              </div>
-            )}
-
             {/* Live Market Data */}
             {hasLiveData && (
               <div className="news-card__market-panel news-card__market-panel--live">
@@ -239,70 +172,10 @@ export default function IntelligenceNewsCard({ article, onExpand }: Intelligence
               </div>
             )}
 
-            {/* Market Snapshot (OHLC) */}
-            {hasSnapshot && (
-              <div className="news-card__market-panel news-card__market-panel--snapshot">
-                <div className="flex items-center gap-1.5 mb-2">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-amber-400">
-                    <path d="M3 3v18h18" /><path d="M18 17V9" /><path d="M13 17V5" /><path d="M8 17v-3" />
-                  </svg>
-                  <span className="text-[9px] font-black text-amber-400 uppercase tracking-[0.15em]">OHLC Snapshot</span>
-                  {snapDir && (
-                    <span className={`ml-auto text-[8px] font-bold uppercase px-1.5 py-0.5 rounded ${
-                      snapDir.toLowerCase() === 'up' ? 'text-emerald-400 bg-emerald-500/10' : 
-                      snapDir.toLowerCase() === 'down' ? 'text-red-400 bg-red-500/10' : 
-                      'text-zinc-400 bg-zinc-800'
-                    }`}>
-                      {snapDir}
-                    </span>
-                  )}
-                </div>
-                <div className="grid grid-cols-4 gap-x-3 gap-y-1">
-                  <div className="flex flex-col">
-                    <span className="text-[8px] text-zinc-600 uppercase font-bold">Open</span>
-                    <span className="font-mono text-[10px] text-zinc-300">{formatPrice(article.marketSnapshot!.openPrice)}</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[8px] text-emerald-600 uppercase font-bold">High</span>
-                    <span className="font-mono text-[10px] text-emerald-300">{formatPrice(article.marketSnapshot!.highPrice)}</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[8px] text-red-600 uppercase font-bold">Low</span>
-                    <span className="font-mono text-[10px] text-red-300">{formatPrice(article.marketSnapshot!.lowPrice)}</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[8px] text-zinc-600 uppercase font-bold">Close</span>
-                    <span className="font-mono text-[10px] text-zinc-300">{formatPrice(article.marketSnapshot!.closePrice)}</span>
-                  </div>
-                </div>
-                {snapMovement !== undefined && (
-                  <div className={`mt-1.5 text-[10px] font-bold ${snapMovement > 0 ? 'text-emerald-400' : snapMovement < 0 ? 'text-red-400' : 'text-zinc-400'}`}>
-                    Movement: {formatPercent(snapMovement)}
-                  </div>
-                )}
-              </div>
-            )}
+
           </div>
         )}
 
-        {/* Enrichment Status Tag */}
-        <div className="flex items-center gap-2 flex-wrap mt-auto pt-2">
-          {article.isEnriched && (
-            <span className="text-[8px] font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/15 px-2 py-0.5 rounded-md uppercase tracking-widest">
-              ✦ Enriched
-            </span>
-          )}
-          {article.isEmbedded && (
-            <span className="text-[8px] font-bold text-cyan-400 bg-cyan-500/10 border border-cyan-500/15 px-2 py-0.5 rounded-md uppercase tracking-widest">
-              ⟐ Embedded
-            </span>
-          )}
-          {article.coinsDetected && (
-            <span className="text-[8px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/15 px-2 py-0.5 rounded-md uppercase tracking-widest">
-              ◎ Coins Detected
-            </span>
-          )}
-        </div>
 
         {/* Action buttons */}
         <div className="news-card__actions">
