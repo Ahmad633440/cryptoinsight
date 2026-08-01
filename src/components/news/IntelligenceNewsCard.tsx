@@ -57,11 +57,19 @@ export default function IntelligenceNewsCard({ article, onExpand }: Intelligence
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           //question: `Summarize this crypto news article in 3-4 concise bullet points. Focus on key facts, market impact, and what it means for investors. Article title: "${article.title}". Article content: "${article.content?.slice(0, 1500) || article.title}"`,
-          question: `Summarize this crypto news article for investors. Return ONLY valid JSON, no markdown, no explanation, in this exact shape:
-                    Include 3-4 bullets total. Each string should be one concise sentence (max ~20 words). Omit a bullet if the article doesn't support it.
+          question: `You are summarizing a cryptocurrency news article for an investor-facing app.
 
-                    Article title: "${article.title}"
-                    Article content: "${article.content?.slice(0, 1500) || article.title}"`,
+Instructions:
+- Output exactly 3-4 bullet points, each starting with "•"
+- Each bullet should be one concise sentence (max ~20 words)
+- Bullet 1-2: the key facts/what happened
+- Bullet 3: market impact (price movement, volume, sentiment, etc. if mentioned)
+- Bullet 4: what this means for investors (implication or outlook)
+- Do not include a title, intro, or closing remarks — output only the bullets
+- If the article lacks enough detail for a category, skip that bullet rather than inventing information
+
+Article title: "${article.title}"
+Article content: "${article.content?.slice(0, 1500) || article.title}"`,
         }),
       });
       const data = await res.json();

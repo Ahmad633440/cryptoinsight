@@ -249,6 +249,7 @@ export default function NewsContentModal({ article, onClose }: NewsContentModalP
           </div>
 
           {/* Enrichment Metadata */}
+          {/* Enrichment Metadata 
           <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-zinc-800/50">
             {article.isEnriched && (
               <span className="text-[9px] font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/15 px-2.5 py-1 rounded-lg uppercase tracking-widest">
@@ -271,6 +272,7 @@ export default function NewsContentModal({ article, onClose }: NewsContentModalP
               </span>
             )}
           </div>
+          */}
 
           {/* Footer */}
           <div className="pt-4 border-t border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-6">

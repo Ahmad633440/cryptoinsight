@@ -125,6 +125,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
       </nav>
 
       {/* ── Education Tip ─────────────────── */}
+      {/* ── Education Tip ─────────────────── 
       {!collapsed && (
         <div className="p-4 mt-auto">
           <div className="rounded-xl border border-indigo-500/20 bg-indigo-500/5 p-4">
@@ -143,7 +144,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
             </p>
           </div>
         </div>
-      )}
+      )}*/}
 
       {/* Collapsed: small icon at bottom */}
       {collapsed && (
