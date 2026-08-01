@@ -56,7 +56,13 @@ export default function IntelligenceNewsCard({ article, onExpand }: Intelligence
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          question: `Summarize this crypto news article in 3-4 concise bullet points. Focus on key facts, market impact, and what it means for investors. Article title: "${article.title}". Article content: "${article.content?.slice(0, 1500) || article.title}"`,
+          //question: `Summarize this crypto news article in 3-4 concise bullet points. Focus on key facts, market impact, and what it means for investors. Article title: "${article.title}". Article content: "${article.content?.slice(0, 1500) || article.title}"`,
+          question: `Summarize this crypto news article for investors. Return ONLY valid JSON, no markdown, no explanation, in this exact shape:
+                    {"bullets": ["fact 1", "fact 2", "market impact", "investor takeaway"]}
+                    Include 3-4 bullets total. Each string should be one concise sentence (max ~20 words). Omit a bullet if the article doesn't support it.
+
+                    Article title: "${article.title}"
+                    Article content: "${article.content?.slice(0, 1500) || article.title}"`,
         }),
       });
       const data = await res.json();
