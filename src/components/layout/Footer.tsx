@@ -13,12 +13,7 @@ const FOOTER_LINKS = {
     { label: "Binance", href: "https://www.binance.com" },
     { label: "TradingView", href: "https://www.tradingview.com" },
   ],
-  Company: [
-    { label: "About", href: "#" },
-    { label: "Blog", href: "#" },
-    { label: "Careers", href: "#" },
-    { label: "Contact", href: "#" },
-  ],
+  
 };
 
 export default function Footer() {
@@ -75,10 +70,7 @@ export default function Footer() {
             © {new Date().getFullYear()} CryptoInsight. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
-            <span className="text-[11px] text-zinc-700 flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse-live" />
-              All systems operational
-            </span>
+            
           </div>
           <div className="flex items-center gap-6">
             <Link href="#" className="text-xs text-zinc-600 hover:text-blue-400 transition-colors">Privacy</Link>

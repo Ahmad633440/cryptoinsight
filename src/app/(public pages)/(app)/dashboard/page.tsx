@@ -228,14 +228,14 @@ export default function DashboardPage() {
               Track your favorite crypto assets with simple, real-time market data.
             </p>
           </div>
-          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+          {/* <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             <Badge variant="green" dot className="bg-emerald-500/10 border-emerald-500/20 px-2 sm:px-3 py-1 text-[10px] sm:text-[11px]">
               Live Feed
             </Badge>
             <Badge variant="zinc" className="bg-zinc-800/40 border-zinc-700/30 px-2 sm:px-3 py-1 text-[9px] sm:text-[10px] font-bold">
               UPDATED {lastUpdated ? lastUpdated.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }) : "..."}
             </Badge>
-          </div>
+          </div> */}
         </div>
       </section>
 

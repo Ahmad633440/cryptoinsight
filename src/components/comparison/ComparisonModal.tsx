@@ -73,26 +73,32 @@ export default function ComparisonModal({ article, initialHistorical, onClose }:
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-6xl h-[90vh] md:h-[80vh] flex flex-col rounded-3xl border border-zinc-800 bg-zinc-950 overflow-hidden shadow-2xl shadow-indigo-500/10">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-0 md:p-4 bg-zinc-950/80 backdrop-blur-md animate-fade-in"
+      onClick={onClose}
+    >
+      <div 
+        className="relative w-full max-w-6xl h-[100dvh] md:h-[80vh] flex flex-col md:rounded-3xl border-x-0 border-y md:border-y-0 border-zinc-800 md:border bg-zinc-950 overflow-hidden shadow-2xl shadow-indigo-500/10"
+        onClick={(e) => e.stopPropagation()}
+      >
         
         {/* ── Header ── */}
-        <header className="flex items-center justify-between p-6 border-b border-zinc-800/80 bg-zinc-900/30 shrink-0">
-          <div className="space-y-1">
+        <header className="flex items-center justify-between gap-3 md:gap-4 p-4 md:p-6 border-b border-zinc-800/80 bg-zinc-900/30 shrink-0">
+          <div className="space-y-1 min-w-0">
             <span className="text-[10px] text-indigo-400 font-extrabold uppercase tracking-widest flex items-center gap-1.5">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
               Semantic Analysis Comparison
             </span>
-            <h2 className="text-lg font-black text-white truncate max-w-xl">
+            <h2 className="text-base md:text-lg font-black text-white truncate max-w-xl">
               Comparing: {article.title}
             </h2>
           </div>
           
           <button
             onClick={onClose}
-            className="p-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white transition-all hover:bg-zinc-800 active:scale-95"
+            className="shrink-0 p-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white transition-all hover:bg-zinc-800 active:scale-95"
             aria-label="Close modal"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -102,28 +108,28 @@ export default function ComparisonModal({ article, initialHistorical, onClose }:
         </header>
 
         {/* ── Scrollable Body Grid ── */}
-        <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-8 hide-scrollbar">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 space-y-6 md:space-y-8 hide-scrollbar">
           
           {/* Main Comparison Panels */}
-          <div className="grid grid-columns-1 lg:grid-cols-2 gap-8 items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 items-stretch">
             
             {/* Left Panel: Current News */}
-            <div className="flex flex-col p-6 rounded-2xl border border-zinc-800/80 bg-zinc-900/10 space-y-4">
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-md bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 text-[10px] font-black uppercase tracking-wider">
+            <div className="flex flex-col p-4 md:p-6 rounded-2xl border border-zinc-800/80 bg-zinc-900/10 space-y-3 md:space-y-4 overflow-hidden">
+              <div className="flex items-center flex-wrap gap-2">
+                <span className="px-2.5 py-0.5 rounded-md bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 text-[10px] font-black uppercase tracking-wider shrink-0">
                   Current Alert
                 </span>
                 {article.coin && (
-                  <Badge variant="blue" className="text-[10px]">
+                  <Badge variant="blue" className="text-[10px] shrink-0">
                     {article.coin}
                   </Badge>
                 )}
-                <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider ml-auto">
+                <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider ml-auto shrink-0">
                   {formatRelativeTime(article.publishedAt)}
                 </span>
               </div>
 
-              <h3 className="text-xl font-bold text-white leading-snug">
+              <h3 className="text-lg md:text-xl font-bold text-white leading-snug break-words">
                 {article.title}
               </h3>
 
@@ -138,7 +144,7 @@ export default function ComparisonModal({ article, initialHistorical, onClose }:
                 </div>
               </div>
 
-              <div className="text-sm text-zinc-400 leading-relaxed whitespace-pre-wrap flex-1 bg-zinc-950/40 p-4 rounded-xl border border-zinc-900/60 overflow-y-auto max-h-[250px] scrollbar-thin">
+              <div className="text-xs md:text-sm text-zinc-400 leading-relaxed whitespace-pre-wrap flex-1 bg-zinc-950/40 p-3 md:p-4 rounded-xl border border-zinc-900/60 overflow-y-auto max-h-[200px] md:max-h-[250px] scrollbar-thin break-words">
                 {article.content || "No details content available."}
               </div>
 
@@ -151,17 +157,17 @@ export default function ComparisonModal({ article, initialHistorical, onClose }:
             </div>
 
             {/* Right Panel: Similar Historical Event */}
-            <div className="flex flex-col p-6 rounded-2xl border border-zinc-800/80 bg-zinc-900/10 space-y-4">
+            <div className="flex flex-col p-4 md:p-6 rounded-2xl border border-zinc-800/80 bg-zinc-900/10 space-y-3 md:space-y-4 overflow-hidden">
               {selectedHistorical ? (
                 <>
-                  <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-0.5 rounded-md bg-purple-500/15 border border-purple-500/30 text-purple-400 text-[10px] font-black uppercase tracking-wider">
+                  <div className="flex items-center flex-wrap gap-2">
+                    <span className="px-2.5 py-0.5 rounded-md bg-purple-500/15 border border-purple-500/30 text-purple-400 text-[10px] font-black uppercase tracking-wider shrink-0">
                       Historical Event
                     </span>
-                    <span className="similarity-badge text-[10px] py-0.5 px-2">
-                      {(selectedHistorical.similarityScore * 100).toFixed(1)}% Similarity
+                    <span className="similarity-badge text-[10px] py-0.5 px-2 shrink-0">
+                      {(selectedHistorical.similarityScore * 100).toFixed(1)}% Match
                     </span>
-                    <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider ml-auto">
+                    <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider ml-auto shrink-0">
                       {new Date(selectedHistorical.publishedAt).toLocaleDateString(undefined, {
                         year: "numeric",
                         month: "short",
@@ -170,7 +176,7 @@ export default function ComparisonModal({ article, initialHistorical, onClose }:
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-bold text-white leading-snug">
+                  <h3 className="text-lg md:text-xl font-bold text-white leading-snug break-words">
                     {selectedHistorical.title}
                   </h3>
 
@@ -185,7 +191,7 @@ export default function ComparisonModal({ article, initialHistorical, onClose }:
                     </div>
                   </div>
 
-                  <div className="text-sm text-zinc-500 leading-relaxed italic bg-zinc-950/20 p-4 rounded-xl border border-zinc-900/60 flex-1">
+                  <div className="text-xs md:text-sm text-zinc-500 leading-relaxed italic bg-zinc-950/20 p-3 md:p-4 rounded-xl border border-zinc-900/60 flex-1 break-words">
                     This matching historical event was identified using vector search similarity based on content embeddings. 
                     Refer below to analyze how the asset's open and close price values correlated to this trigger in the past.
                   </div>
@@ -214,9 +220,9 @@ export default function ComparisonModal({ article, initialHistorical, onClose }:
 
           {/* ── Correlation Summary Section ── */}
           {selectedHistorical && (
-            <section className="p-6 rounded-2xl border border-indigo-500/10 bg-gradient-to-r from-indigo-500/5 to-purple-500/5 space-y-4">
-              <h4 className="text-xs font-black text-indigo-400 uppercase tracking-widest flex items-center gap-1.5">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <section className="p-4 md:p-6 rounded-2xl border border-indigo-500/10 bg-gradient-to-r from-indigo-500/5 to-purple-500/5 space-y-3 md:space-y-4 overflow-hidden">
+              <h4 className="text-[10px] md:text-xs font-black text-indigo-400 uppercase tracking-widest flex items-center gap-1.5">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="shrink-0">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                 </svg>
                 AI Correlation Report
