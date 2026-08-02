@@ -1,0 +1,26 @@
+name: News Sync Cron
+
+on:
+  schedule:
+    # Runs every 15 minutes (adjust as needed). GitHub schedule uses UTC.
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  call-news-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call news-sync endpoint
+        env:
+          VERCEL_URL: ${{ secrets.VERCEL_URL }}
+          GHA_CRON_SECRET: ${{ secrets.GHA_CRON_SECRET }}
+        run: |
+          if [ -z "$VERCEL_URL" ]; then echo "VERCEL_URL secret is not set"; exit 1; fi
+          # If GHA_CRON_SECRET is set, we include it in a header. If not, call without it.
+          if [ -n "$GHA_CRON_SECRET" ]; then
+            echo "Calling $VERCEL_URL/api/cron/news-sync with secret header"
+            curl -sS -X GET "$VERCEL_URL/api/cron/news-sync" -H "x-github-actions-secret: $GHA_CRON_SECRET" -o /dev/null -w "HTTP %{http_code}\n"
+          else
+            echo "Calling $VERCEL_URL/api/cron/news-sync without secret header"
+            curl -sS -X GET "$VERCEL_URL/api/cron/news-sync" -o /dev/null -w "HTTP %{http_code}\n"
+          fi

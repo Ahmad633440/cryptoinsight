@@ -1,13 +1,13 @@
 
 /**
- * News enrichment service - enriches news articles with market data from CoinMarketCap
+ * News enrichment service - enriches news articles with market data from CoinGecko
  * 
  * Flow:
  * 1. Find unenriched news articles
  * 2. Use detected coins (or fall back to coin detection)
- * 3. Fetch current market data from CoinMarketCap for primary coin
+ * 3. Fetch current market data from CoinGecko for primary coin
  * 4. Store market data as priceBefore, marketCapBefore, volume24hBefore
- * 5. Mark as enriched and schedule for price update
+ * 5. Mark as enriched
  * 
  * Multi-coin support:
  * - Articles can have multiple detected coins
@@ -95,14 +95,14 @@ export const enrichSingleNews = async (newsId: string): Promise<{ success: boole
     // Step 2: Validate coin exists in CoinGecko
     const isValid = await validateCoin(primaryCoin.symbol);
     if (!isValid) {
-      // Edge case: Coin mentioned but not in CoinMarketCap (invalid/new coin)
+      // Edge case: Coin mentioned but not in CoinGecko (invalid/new coin)
       news.isEnriched = true;
       news.enrichedAt = new Date();
       await news.save();
       console.warn(
         `[ENRICHMENT] Coin ${primaryCoin.symbol} not found in CoinGecko, marked as enriched without data: ${newsId}`
       );
-      return { success: true };
+      return { success: false, error: "Coin not found in CoinGecko" };
     }
 
     // Step 3: Fetch current market data

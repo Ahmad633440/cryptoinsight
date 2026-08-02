@@ -6,7 +6,6 @@
  * 1. News sync - fetches news from external API (every 30 min)
  *    └─ Coin detection runs IMMEDIATELY for new articles
  * 2. Coin detection - auto-detects coins in legacy news (every 10 min)
- * 3. Price update - captures market data 24h after publish (every hour)
  */
 
 import { syncNews } from "@/controllers/fetchNews";

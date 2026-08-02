@@ -3,7 +3,7 @@
  * 
  * Returns news articles with:
  * - Stored market data (priceBefore, marketCapBefore, volume24hBefore, priceAfter, priceChangePercent)
- * - Live market data from CoinMarketCap (current price, market cap, volume)
+ * - Live market data from CoinGecko (current price, market cap, volume)
  */
 
 import { connectDB } from "@/lib/db";
