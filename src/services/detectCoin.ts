@@ -199,7 +199,7 @@ export const detectCoin = (
 };
 
 /**
- * Validate coin exists in CoinMarketCap
+ * Validate coin exists in CoinGecko
  */
 export const validateCoin = async (
   symbol: string

@@ -1,7 +1,7 @@
 /**
- * Immediate Enrichment Service
- * Runs immediately after coin detection for newly fetched news
- * Stores the initial price snapshot and derived impact metrics.
+ Immediate Enrichment Service
+ Runs immediately after coin detection for newly fetched news
+ Stores the initial price snapshot and derived impact metrics.
  */
 
 import News from "@/models/news";
@@ -9,12 +9,12 @@ import { getQuoteBySymbol } from "@/lib/coingecko";
 import { CoinQuote } from "@/data/types";
 
 /**
- * Immediately enrich a single news article with market data
- * Called right after coin detection succeeds
- * 
- * @param newsId - MongoDB news document ID
- * @param coinSymbol - Coin symbol to enrich (e.g., "BTC")
- * @returns Success status
+ Immediately enrich a single news article with market data
+ Called right after coin detection succeeds
+ 
+ @param newsId - MongoDB news document ID
+@param coinSymbol - Coin symbol to enrich (e.g., "BTC")
+ @returns Success status
  */
 export const enrichNewsImmediately = async (
   newsId: string,

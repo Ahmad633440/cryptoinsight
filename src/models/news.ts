@@ -10,7 +10,7 @@ const NewsSchema = new mongoose.Schema({
   coins: [
     {
       symbol: String, 
-      coinId: String, // CoinMarketCap ID 
+      coinId: String, // Standard coin identifier
       confidence: {
         type: String,
         enum: ["high", "medium", "low"],

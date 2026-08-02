@@ -12,8 +12,14 @@ export const maxDuration = 300; // 5 minutes timeout
  */
 export async function GET(request: Request) {
   try {
-    // Verify request is from Vercel cron (optional security layer)
-    const authHeader = request.headers.get("authorization");
+    // Verify request comes with an optional secret header set by GitHub Actions
+    // If GHA_CRON_SECRET is defined in the runtime env, require callers to include
+    // that secret in the `x-github-actions-secret` header (or authorization).
+    const incomingSecret = request.headers.get("x-github-actions-secret") || request.headers.get("authorization");
+    if (process.env.GHA_CRON_SECRET && incomingSecret !== process.env.GHA_CRON_SECRET) {
+      console.warn('[CRON] Unauthorized request to news-sync');
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
     
     console.log("[CRON] ========== News sync (Vercel) ==========");
     console.log(`[CRON] Started at: ${new Date().toISOString()}`);
