@@ -8,6 +8,7 @@ import { formatRelativeTime } from "@/lib/utils";
 interface SimilarHistoricalItem {
   _id: string;
   title: string;
+  content?: string;
   coin?: string;
   sentiment?: string;
   publishedAt: string | Date;
@@ -192,8 +193,9 @@ export default function ComparisonModal({ article, initialHistorical, onClose }:
                   </div>
 
                   <div className="text-xs md:text-sm text-zinc-500 leading-relaxed italic bg-zinc-950/20 p-3 md:p-4 rounded-xl border border-zinc-900/60 flex-1 break-words">
-                    This matching historical event was identified using vector search similarity based on content embeddings. 
-                    Refer below to analyze how the asset's open and close price values correlated to this trigger in the past.
+                    {selectedHistorical.content ? selectedHistorical.content : (
+                      "This matching historical event was identified using vector search similarity based on content embeddings. Refer below to analyze how the asset's open and close price values correlated to this trigger in the past."
+                    )}
                   </div>
 
                   {selectedHistorical.marketData && (
