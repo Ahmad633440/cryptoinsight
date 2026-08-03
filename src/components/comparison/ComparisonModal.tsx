@@ -12,6 +12,8 @@ interface SimilarHistoricalItem {
   coin?: string;
   sentiment?: string;
   publishedAt: string | Date;
+  source?: string;
+  url?: string;
   marketData?: {
     openPrice?: number;
     closePrice?: number;
@@ -197,6 +199,28 @@ export default function ComparisonModal({ article, initialHistorical, onClose }:
                       "This matching historical event was identified using vector search similarity based on content embeddings. Refer below to analyze how the asset's open and close price values correlated to this trigger in the past."
                     )}
                   </div>
+                  {selectedHistorical.url ? (
+                    <a
+                      href={selectedHistorical.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 self-start px-3.5 py-2 rounded-xl bg-purple-500/10 border border-purple-500/25 text-purple-300 text-xs font-bold uppercase tracking-wider hover:bg-purple-500/20 hover:border-purple-500/50 hover:text-purple-200 transition-all active:scale-95 group"
+                    >
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="shrink-0">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+                        <polyline points="15 3 21 3 21 9" />
+                        <line x1="10" y1="14" x2="21" y2="3" />
+                      </svg>
+                      Read Article{selectedHistorical.source ? ` — ${selectedHistorical.source}` : ""}
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all shrink-0">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 18l6-6-6-6" />
+                      </svg>
+                    </a>
+                  ) : selectedHistorical.source ? (
+                    <span className="text-xs text-zinc-500 font-bold uppercase tracking-wider">
+                      Source: {selectedHistorical.source}
+                    </span>
+                  ) : null}
 
                   {selectedHistorical.marketData && (
                     <div className="pt-2">
