@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Badge from "@/components/ui/Badge";
 import InteractiveSparkline from "./InteractiveSparkline";
 
@@ -158,9 +158,33 @@ const TABLE_HEADERS = [
 
 export default function MarketTable({ data }: MarketTableProps) {
   const [showEducation, setShowEducation] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredData = useMemo(() => {
+    return data.filter((coin) => 
+      coin.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      coin.symbol.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [data, searchQuery]);
 
   return (
     <div className="space-y-4">
+      {/* Search Bar */}
+      <div className="relative">
+        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+          <svg className="h-5 w-5 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <input
+          type="text"
+          placeholder="Search coins by name or symbol..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full bg-zinc-900/50 border border-zinc-800/40 rounded-xl sm:rounded-2xl py-3 sm:py-4 pl-11 pr-4 text-sm sm:text-base text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all backdrop-blur-md"
+        />
+      </div>
+
       {/* Beginner Educational Banner */}
       {showEducation && (
         <div className="p-4 sm:p-5 rounded-2xl border border-blue-500/20 bg-blue-500/5 text-zinc-300 relative animate-fade-in text-xs leading-relaxed max-w-full">
@@ -195,9 +219,15 @@ export default function MarketTable({ data }: MarketTableProps) {
         
         {/* ── Mobile View (< md) ─────────── */}
         <div className="md:hidden">
-          {data.map((coin) => (
-            <MobileCoinCard key={coin.symbol} coin={coin} />
-          ))}
+          {filteredData.length > 0 ? (
+            filteredData.map((coin) => (
+              <MobileCoinCard key={coin.symbol} coin={coin} />
+            ))
+          ) : (
+            <div className="p-8 text-center text-zinc-500 text-sm">
+              No coins found matching "{searchQuery}"
+            </div>
+          )}
         </div>
 
         {/* ── Desktop Table View (≥ md) ──── */}
@@ -237,7 +267,14 @@ export default function MarketTable({ data }: MarketTableProps) {
 
             {/* ── Body ─────────────────────────── */}
             <tbody>
-              {data.map((coin, i) => (
+              {filteredData.length === 0 && (
+                <tr>
+                  <td colSpan={TABLE_HEADERS.length} className="px-6 py-12 text-center text-zinc-500 text-sm">
+                    No coins found matching "{searchQuery}"
+                  </td>
+                </tr>
+              )}
+              {filteredData.map((coin, i) => (
                 <tr
                   key={coin.symbol}
                   className={`
@@ -314,7 +351,7 @@ export default function MarketTable({ data }: MarketTableProps) {
         {/* ── Footer ─────────────────────────── */}
         <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3 sm:py-4 border-t border-zinc-800/40 bg-zinc-950/20">
           <span className="text-[9px] sm:text-[10px] font-bold text-zinc-600 uppercase tracking-widest">
-            Displaying {data.length} assets
+            Displaying {filteredData.length} assets
           </span>
           <div className="flex items-center gap-2">
             <Badge variant="zinc" className="text-[8px] sm:text-[9px] font-black uppercase tracking-tighter bg-zinc-800/40 border-zinc-700/30">

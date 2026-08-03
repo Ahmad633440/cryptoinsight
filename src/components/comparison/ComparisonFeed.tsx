@@ -106,7 +106,7 @@ export default function ComparisonFeed() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-zinc-800/80 pb-6 relative z-10">
         <div className="space-y-1">
           <span className="text-[10px] text-indigo-400 font-extrabold uppercase tracking-widest block">
-            Vector Search Filter
+            Search Filter
           </span>
           <p className="text-xs text-zinc-500 font-medium">
             Filter articles by blockchain asset to track matching historical patterns.
