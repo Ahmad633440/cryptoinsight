@@ -7,6 +7,7 @@ import MarketDataWidget from "./MarketDataWidget";
 interface SimilarHistoricalItem {
   _id: string;
   title: string;
+  content?: string;
   coin?: string;
   sentiment?: string;
   publishedAt: string | Date;
@@ -73,6 +74,11 @@ export default function HistoricalEventCard({ event, onClick }: HistoricalEventC
       <h4 className="historical-card__title">
         {title}
       </h4>
+
+      {/* Short content preview */}
+      <p className="historical-card__body text-sm text-zinc-400 mt-2 line-clamp-3">
+        {event.content ? event.content : "No detailed content available."}
+      </p>
 
       {/* Bottom row: Sentiment badge and market widget */}
       <div className="flex flex-col gap-2 mt-auto pt-2 border-t border-zinc-800/40">

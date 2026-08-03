@@ -4,6 +4,7 @@ import News from "@/models/news";
 interface SimilarHistoricalItem {
   _id: string;
   title: string;
+  content?: string;
   coin?: string;
   sentiment?: string;
   publishedAt: Date;
@@ -96,51 +97,87 @@ export const findSimilarNews = async ({
   for (const item of pageItems) {
     const embedding = Array.isArray(item.embedding) ? item.embedding : [];
 
-    const similarHistorical =
-      embedding.length > 0
-        ? await News.aggregate<SimilarHistoricalItem>([
-            {
-              $vectorSearch: {
-                index: "vector_index",
-                path: "embedding",
-                queryVector: embedding,
-                numCandidates: 150,
-                limit: 10,
-              },
-            },
-            {
-              $match: {
-                _id: { $ne: item._id },
-              },
-            },
-            {
-              $project: {
-                _id: 1,
-                title: 1,
-                coin: 1,
-                sentiment: 1,
-                publishedAt: 1,
-                source: 1,
-                url: 1,
-                marketData: {
-                  $ifNull: [
-                    "$marketSnapshot",
-                    {
-                      openPrice: "$openPrice",
-                      closePrice: "$closePrice",
-                      marketDirection: { $ifNull: ["$marketDirection", "$marketDircetion"] },
-                      priceMovement: "$movement_OpenClose_%",
-                    },
-                  ],
+    let similarHistorical: SimilarHistoricalItem[] = [];
+    if (embedding.length > 0) {
+      const itemId = typeof item._id === "string" ? new mongoose.Types.ObjectId(item._id) : item._id;
+      const matchStage: Record<string, unknown> = {
+        _id: { $ne: itemId },
+      };
+      if (item.url) {
+        Object.assign(matchStage, { url: { $ne: item.url } });
+      }
+
+      // Run vector search with a higher candidate limit, then filter/normalize in JS
+      const rawMatches = await News.aggregate<any>([
+        {
+          $vectorSearch: {
+            index: "vector_index",
+            path: "embedding",
+            queryVector: embedding,
+            numCandidates: 150,
+            limit: 10,
+          },
+        },
+        {
+          $match: matchStage,
+        },
+        // Project all required fields (include `content` so frontend can display it)
+        {
+          $project: {
+            _id: 1,
+            title: 1,
+            content: 1,
+            coin: 1,
+            sentiment: 1,
+            publishedAt: 1,
+            source: 1,
+            url: 1,
+            marketData: {
+              $ifNull: [
+                "$marketSnapshot",
+                {
+                  openPrice: "$openPrice",
+                  closePrice: "$closePrice",
+                  marketDirection: { $ifNull: ["$marketDirection", "$marketDircetion"] },
+                  priceMovement: "$movement_OpenClose_%",
                 },
-                similarityScore: { $meta: "vectorSearchScore" },
-              },
+              ],
             },
-            {
-              $limit: 3,
-            },
-          ])
-        : [];
+            similarityScore: { $meta: "vectorSearchScore" },
+          },
+        },
+      ]);
+
+      // Post-process: dedupe by _id, normalize score to 0-1, filter threshold, limit to max 3
+      const seen = new Set<string>();
+      for (const m of rawMatches) {
+        const matchId = String(m._id);
+        if (seen.has(matchId)) continue; // dedupe
+
+        // Normalize similarity score to fraction 0..1
+        let score = typeof m.similarityScore === "number" ? m.similarityScore : 0;
+        if (score > 1) {
+          score = score / 100;
+        }
+
+        // Enforce 80% threshold
+        if (score < 0.8) continue;
+
+        seen.add(matchId);
+        similarHistorical.push({
+          _id: matchId,
+          title: m.title,
+          content: m.content,
+          coin: m.coin,
+          sentiment: m.sentiment,
+          publishedAt: m.publishedAt,
+          marketData: m.marketData,
+          similarityScore: score,
+        });
+
+        if (similarHistorical.length >= 3) break; // cap
+      }
+    }
 
     const marketData =
       item.marketSnapshot ?? {
