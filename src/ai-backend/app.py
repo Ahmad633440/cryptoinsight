@@ -1,81 +1,71 @@
+"""
+app.py
+------
+Flask entry point. Thin layer - all logic lives in the imported modules.
 
+Request flow:
+  1. price_detector  ->  is this a price question? which coins?
+  2. coingecko       ->  fetch live price context (if needed)
+  3. rag             ->  fetch MongoDB news context
+  4. rag.ask_llm     ->  combine contexts -> LLM -> answer
+"""
 
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_mongodb import MongoDBAtlasVectorSearch
-from langchain_groq import ChatGroq
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnablePassthrough
-from langchain_core.output_parsers import StrOutputParser
-from pymongo import MongoClient
+# pyrefly: ignore [missing-import]
 from flask import Flask, request, jsonify
+# pyrefly: ignore [missing-import]
 from flask_cors import CORS
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
+import config
+from coingecko import build_price_context
+from price_detector import is_price_question, extract_gecko_ids
+from rag import fetch_rag_context, ask_llm
 
-print("MongoDB URL:", os.getenv("MONGODB_URI"))
-print("Gemini Key exists:", bool(os.getenv("GEMINI_KEY")))
-print("Groq Key exists:", bool(os.getenv("GROQ_KEY")))
+# App setup
+config.print_config_status()
 
 app = Flask(__name__)
 CORS(app, origins="*")
 
-MONGODB_URL = os.getenv("MONGODB_URI")
-GEMINI_KEY = os.getenv("GEMINI_KEY")
-GROQ_KEY = os.getenv("GROQ_KEY")
 
-mongo_client = MongoClient(MONGODB_URL)
-collection = mongo_client["cryptoinsight"]["news"]
-
-embeddings = GoogleGenerativeAIEmbeddings(
-    model="gemini-embedding-001",
-    google_api_key=GEMINI_KEY
-)
-
-vector_store = MongoDBAtlasVectorSearch(
-    collection=collection,
-    embedding=embeddings,
-    index_name="vector_index",
-    text_key="content"
-)
-
-llm = ChatGroq(
-    api_key=GROQ_KEY,
-    model="llama-3.3-70b-versatile"
-)
-
-system_prompt = """You are a neutral crypto educator for beginners. 
-Your goal is to explain cryptocurrency concepts clearly and simply.
-You must NEVER give financial advice.
-If the user asks a question that is NOT related to cryptocurrency, blockchain, or web3, you MUST politely refuse to answer and steer the conversation back to crypto topics. Do not attempt to answer non-crypto questions (like politics, history, general knowledge).
-
-Use the following context to inform your answer if relevant:
-{context}"""
-
-prompt = ChatPromptTemplate.from_messages([
-    ("system", system_prompt),
-    ("human", "{question}")
-])
-
-def format_docs(docs):
-    return "\n\n".join(doc.page_content for doc in docs)
-
-retriever = vector_store.as_retriever()
-
-chain = (
-    {"context": retriever | format_docs, "question": RunnablePassthrough()}
-    | prompt
-    | llm
-    | StrOutputParser()
-)
-
-@app.route('/ask', methods=['POST'])
+# Routes
+@app.route("/ask", methods=["POST"])
 def ask():
-    data = request.get_json()
-    user_question = data['question']
-    answer = chain.invoke(user_question)
+    data = request.get_json(silent=True) or {}
+    question = data.get("question", "").strip()
+
+    if not question:
+        return jsonify({"error": "No question provided"}), 400
+
+    context_parts: list[str] = []
+
+    # 1. Live price data (injected first so LLM prioritises it over stale news)
+    if is_price_question(question):
+        gecko_ids = extract_gecko_ids(question)
+        price_ctx = build_price_context(gecko_ids)
+        if price_ctx:
+            context_parts.append(price_ctx)
+
+    # 2. MongoDB RAG news context
+    rag_ctx = fetch_rag_context(question)
+    if rag_ctx:
+        context_parts.append(rag_ctx)
+
+    combined = (
+        "\n\n---\n\n".join(context_parts)
+        if context_parts
+        else "No additional context available."
+    )
+
+    answer = ask_llm(context=combined, question=question)
     return jsonify({"answer": answer})
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
+
+@app.route("/health", methods=["GET"])
+def health():
+    """Simple health-check endpoint for Railway uptime monitoring."""
+    return jsonify({"status": "ok"})
+
+
+# Entry point
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=False, threaded=True)
