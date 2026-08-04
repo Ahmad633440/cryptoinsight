@@ -98,3 +98,38 @@ def build_price_context(gecko_ids: list[str]) -> str:
         lines.append(" | ".join(parts))
 
     return "\n".join(lines)
+
+
+def build_price_context_from_list(gecko_ids: list[str], live_coins: list[dict]) -> str:
+    """
+    Build the price context block using pre-fetched/cached coin market data.
+    """
+    if not gecko_ids or not live_coins:
+        return ""
+
+    target_ids = set(gecko_ids)
+    matched_coins = [coin for coin in live_coins if coin.get("id") in target_ids]
+
+    if not matched_coins:
+        return ""
+
+    lines = ["[LIVE MARKET DATA - fetched right now from CoinGecko]"]
+    for coin in matched_coins:
+        gecko_id = coin.get("id")
+        price = coin.get("current_price")
+        change = coin.get("price_change_percentage_24h")
+        mcap = coin.get("market_cap")
+        vol = coin.get("total_volume")
+        name = gecko_id.replace("-", " ").title() if gecko_id else coin.get("name", "").title()
+
+        price_str = f"${price:,.8g} USD" if price is not None else "price unavailable"
+        parts = [f"{name}: {price_str}"]
+        if change is not None:
+            parts.append(f"24h change: {change:+.2f}%")
+        if mcap is not None:
+            parts.append(f"market cap: ${mcap:,.0f}")
+        if vol is not None:
+            parts.append(f"24h volume: ${vol:,.0f}")
+        lines.append(" | ".join(parts))
+
+    return "\n".join(lines)
