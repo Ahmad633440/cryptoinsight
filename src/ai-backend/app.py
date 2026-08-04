@@ -16,7 +16,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 import config
-from coingecko import build_price_context
+from coingecko import build_price_context, build_price_context_from_list
 from price_detector import is_price_question, extract_gecko_ids
 from rag import fetch_rag_context, ask_llm
 
@@ -41,7 +41,11 @@ def ask():
     # 1. Live price data (injected first so LLM prioritises it over stale news)
     if is_price_question(question):
         gecko_ids = extract_gecko_ids(question)
-        price_ctx = build_price_context(gecko_ids)
+        live_coins = data.get("liveCoins")
+        if live_coins:
+            price_ctx = build_price_context_from_list(gecko_ids, live_coins)
+        else:
+            price_ctx = build_price_context(gecko_ids)
         if price_ctx:
             context_parts.append(price_ctx)
 

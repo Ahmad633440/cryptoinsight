@@ -1,8 +1,17 @@
 import { NextResponse } from 'next/server';
+import { getLiveCoins } from '@/services/dashboardCoins';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+
+    // Fetch cached CoinGecko prices to pass to Flask backend (so it doesn't get blocked)
+    let liveCoins: any[] = [];
+    try {
+      liveCoins = await getLiveCoins();
+    } catch (e) {
+      console.error('[API] Failed to get live coins from cache:', e);
+    }
 
     const backendUrl = process.env.FLASK_BACKEND_URL || 'http://127.0.0.1:5000';
     console.log('[API] Connecting to chatbot backend at:', backendUrl);
@@ -11,7 +20,10 @@ export async function POST(request: Request) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({
+        ...body,
+        liveCoins,
+      }),
     });
 
     if (!response.ok) {
