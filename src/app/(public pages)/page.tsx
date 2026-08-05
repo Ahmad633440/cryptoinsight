@@ -118,7 +118,7 @@ export default function HomePage() {
       </section>
 
       {/* ──────────────────────────────────────────────────────────
-          SECTION 4 — Market Growth (Simple Graph Touch)
+          SECTION 4 — Market Growth ( Graph)
           ────────────────────────────────────────────────────────── */}
       <section className="w-full max-w-5xl px-6 py-24">
         <div className="rounded-3xl border border-zinc-800/50 bg-zinc-900/20 backdrop-blur-xl p-8 md:p-12 overflow-hidden relative">

@@ -8,6 +8,8 @@ interface SimilarHistoricalItem {
   coin?: string;
   sentiment?: string;
   publishedAt: Date;
+  source?: string;
+  url?: string;
   marketData?: unknown;
   similarityScore: number;
 }
@@ -171,6 +173,8 @@ export const findSimilarNews = async ({
           coin: m.coin,
           sentiment: m.sentiment,
           publishedAt: m.publishedAt,
+          source: m.source,
+          url: m.url,
           marketData: m.marketData,
           similarityScore: score,
         });
