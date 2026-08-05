@@ -11,6 +11,8 @@ interface SimilarHistoricalItem {
   coin?: string;
   sentiment?: string;
   publishedAt: string | Date;
+  source?: string;
+  url?: string;
   marketData?: {
     openPrice?: number;
     closePrice?: number;
