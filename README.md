@@ -1,168 +1,75 @@
-# 🚀 CryptoInsight
+# MUHAMMAD ASAD
+### Full Stack Developer | Next.js & AI Integration | BSCS Graduate
 
-A data-driven web platform that helps users understand current cryptocurrency market news by comparing it with historically similar events and showing real market outcomes.
-
----
-
-## 📌 Overview
-
-CryptoInsight analyzes real-time crypto news and matches it with similar past events using semantic search (embeddings). Instead of predicting the future, it provides historical context and actual price reactions to help users make informed decisions.
-
----
-
-## 🎯 Problem
-
-Crypto users often react emotionally to news without context. Traditional platforms:
-
-* Show raw news
-* Require manual research
-* Provide no historical comparison
+📍 Lahore, Pakistan  
+📞 +92 311 7749847  
+📧 asad209673@gmail.com  
+🌐 Portfolio: [my-portfolio-gold-two-19.vercel.app](https://my-portfolio-gold-two-19.vercel.app)  
+💻 GitHub: [github.com/Asad-dotcom](https://github.com/Asad-dotcom)
 
 ---
 
-## 💡 Solution
+## 🌟 Featured Projects
 
-CryptoInsight:
+### 🚀 CryptoInsight (Final Year Project) — Full Stack Role
+- **Tech:** Next.js, TypeScript, Tailwind CSS, MongoDB Atlas, LangChain, OpenAI API, CoinGecko API, Llama 3.3, RAG
+- Integrated CoinGecko/CryptoPanic APIs into a LangChain pipeline for sentiment scoring, trend summaries, and risk ratings.
+- Built a RAG layer using vector embeddings in MongoDB Atlas for historical market search and an interactive Llama 3.3 AI chat.
+- **Repo:** [CryptoInsight](https://github.com/Ahmad633440/cryptoinsight)
 
-* Finds similar past events automatically
-* Shows actual price movements after those events
-* Provides structured comparison insights
+### 🍔 Food Delivery Platform — Frontend Role
+- **Tech:** Vue 3, Quasar Framework, Node.js
+- Developed restaurant and admin dashboards with live order tracking, menu management, payout tracking, and role-based access control.
+- **Repo:** [Food Delivery Project](#)
 
----
-
-## ⚙️ How It Works
-
-1. Fetch real-time crypto news via APIs
-2. Convert news into embeddings (vector representation)
-3. Store data in MongoDB
-4. When new news arrives:
-
-   * Generate embedding
-   * Perform vector similarity search
-5. Retrieve similar past events
-6. Display:
-
-   * Past event details
-   * Price changes (24h / few days)
-   * AI-generated comparison summary
+### 📊 AI Data Analytics Platform
+- Turns natural language prompts into automated SQL queries, generates executive business insights, and renders interactive charts.
+- **Frontend:** Next.js (App Router), TypeScript, Tailwind CSS, Recharts, Lucide Icons
+- **Backend & AI:** Next.js API Routes, Google Gemini AI (`@google/genai`), Redis (rate limiting)
+- **Database & Storage:** PostgreSQL (`pg` pool for dynamic dataset tables), Supabase Storage (CSV/Excel)
 
 ---
 
-## 🧠 Core Features
+## 🧾 Professional Summary
 
-* 🔍 Semantic Search (context-based matching)
-* 📊 Historical Price Analysis
-* 🤖 AI-powered Comparison Summaries
-* 🧾 Source Transparency (real news links)
-* ⚠️ No Predictions (data-driven insights only)
+Full Stack Developer and BSCS graduate skilled in building responsive, scalable web applications end-to-end using React, Vue.js, Next.js, Node.js, and PostgreSQL. Experienced in owning full project lifecycles from requirements to deployment. Actively expanding into AI/ML engineering, including LangChain, RAG pipelines, and vector databases.
 
 ---
 
-## 🏗️ Tech Stack
+## 🛠 Technical Skills
 
-### Frontend
-
-* Next.js
-* React
-* Tailwind CSS
-
-### Backend
-
-* Node.js
-* Express.js
-
-### Database
-
-* MongoDB (with vector search)
-
-### AI / APIs
-
-* Embeddings API (e.g., Gemini / OpenAI)
-* Coin Gecko APIs
-* Crypto Panic APIs
+- **Frontend:** React.js, Vue.js (Quasar), Next.js App Router (SSR, Server Actions), TypeScript, Tailwind CSS, JavaScript (ES6+)
+- **Backend & DB:** Node.js, Express.js, RESTful API Design, PostgreSQL, MySQL, MongoDB, Prisma ORM
+- **DevOps & Tools:** Git, GitHub, Vercel, Postman
+- **Languages:** C, C++ (OOP: Encapsulation, Inheritance, Abstraction, Polymorphism), DSA
 
 ---
 
-## 📊 Data Model (Simplified)
+## 💼 Experience
 
-* title
-* description
-* coin
-* date
-* embedding
-* priceBefore
-* priceAfter
-* priceChangePercent
-* source
+### Frontend Vue.js Developer — Trainee
+**Developer Studio** | Jun 2025 – Sep 2025
+- Built and deployed responsive e-commerce prototypes using Vue.js, Quasar Framework, Pinia, and Tailwind CSS.
+- Integrated REST APIs with async/await handling, error boundaries, loading states, and optimistic UI updates.
 
----
-
-## 🚧 Limitations
-
-* Similarity is not always perfect
-* Market behavior is unpredictable
-* Results depend on data quality
-* System provides insights, not financial advice
+### Freelance Full Stack Developer
+**Oct 2025 – Present**
+- Worked on friends' projects in different roles, mainly UI development and API integration.
 
 ---
 
-## 🔥 Future Improvements
+## 🎓 Education & Certifications
 
-* Better event classification
-* More historical data
-* Confidence scoring system
-* User personalization
-
----
-
-## 🧪 Setup Instructions
-
-### 1. Clone the repo
-
-```
-git clone https://github.com/your-username/cryptoInsight.git
-```
-
-### 2. Install dependencies
-
-```
-cd client && npm install
-cd ../server && npm install
-```
-
-### 3. Setup environment variables
-
-Create `.env` file in server:
-
-```
-MONGO_URI=
-API_KEYS=
-```
-
-### 4. Run project
-
-```
-# backend
-cd server
-npm run dev
-
-# frontend
-cd client
-npm run dev
-
-# backend cmds
-npx tsx src/scripts/cron.ts   
-npx tsx src/scripts/migratePendingEmbeddings.ts  
-```
+- **BSCS (Computer Science)** — CGPA 3.17/4.00  
+  Govt. Graduate College of Science, Lahore | Aug 2022 – 2026
+- **Frontend Vue.js Developer Certificate**  
+  Developer Studio | Jun 2025 – Sep 2025
+- **ICS (Intermediate in Computer Science)**  
+  Govt. Graduate College of Science, Lahore | 2020 – 2022
 
 ---
 
-## 📌 Key Principle
+## 📚 Additional Info
 
-> We don’t predict the market. We show what happened in similar situations so users can think better.
-
----
-
-## 📜 License
-
-This project is for educational purposes.
+- **Currently Learning:** LangChain (agentic pipelines, tool calling), RAG, Prompt Engineering, Advanced TypeScript
+- **Work Mode & Interests:** On-site / Remote / Hybrid | Open Source, UI/UX Design, Database Design
