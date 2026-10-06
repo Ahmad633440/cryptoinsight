@@ -1,168 +1,62 @@
-# 🚀 CryptoInsight
+# 👋 Hi, I'm Ahmad
 
-A data-driven web platform that helps users understand current cryptocurrency market news by comparing it with historically similar events and showing real market outcomes.
-
----
-
-## 📌 Overview
-
-CryptoInsight analyzes real-time crypto news and matches it with similar past events using semantic search (embeddings). Instead of predicting the future, it provides historical context and actual price reactions to help users make informed decisions.
+### Building practical AI products, data-driven platforms, and real-world web apps.
 
 ---
 
-## 🎯 Problem
+## 🌟 Featured Projects
 
-Crypto users often react emotionally to news without context. Traditional platforms:
+### 1) 🚀 CryptoInsight — AI Analysis Platform
+An AI-powered crypto intelligence platform that compares live market news with similar historical events and shows real price outcomes.
 
-* Show raw news
-* Require manual research
-* Provide no historical comparison
+- **Tech:** Next.js, TypeScript, MongoDB, Vector Search, AI Embeddings  
+- **Highlights:** Semantic similarity, historical comparison, AI summaries, market dashboards  
+- **Repo:** [CryptoInsight](https://github.com/Ahmad633440/cryptoinsight)
 
----
+### 2) 🍔 Food Delivery Project
+A full-stack food delivery app focused on fast ordering, clean UX, and reliable order tracking.
 
-## 💡 Solution
-
-CryptoInsight:
-
-* Finds similar past events automatically
-* Shows actual price movements after those events
-* Provides structured comparison insights
+- **Tech:** Web app stack + backend APIs + database integration  
+- **Highlights:** Menu browsing, cart flow, order management, responsive design  
+- **Repo:** [Food Delivery Project](#)
 
 ---
 
-## ⚙️ How It Works
+## 💡 About This Repository
 
-1. Fetch real-time crypto news via APIs
-2. Convert news into embeddings (vector representation)
-3. Store data in MongoDB
-4. When new news arrives:
+This repository contains **CryptoInsight**, a data-driven platform that helps users understand crypto news with historical context instead of hype-based predictions.
 
-   * Generate embedding
-   * Perform vector similarity search
-5. Retrieve similar past events
-6. Display:
+### Core Features
+- 🔍 Semantic search for similar past events
+- 📊 Historical price reaction analysis
+- 🤖 AI-generated comparison insights
+- 🧾 Transparent news sources and evidence-based output
 
-   * Past event details
-   * Price changes (24h / few days)
-   * AI-generated comparison summary
+### Key Principle
+> We don’t predict the market — we show what happened in similar situations so users can think better.
 
 ---
 
-## 🧠 Core Features
+## 🛠️ Tech Stack
 
-* 🔍 Semantic Search (context-based matching)
-* 📊 Historical Price Analysis
-* 🤖 AI-powered Comparison Summaries
-* 🧾 Source Transparency (real news links)
-* ⚠️ No Predictions (data-driven insights only)
-
----
-
-## 🏗️ Tech Stack
-
-### Frontend
-
-* Next.js
-* React
-* Tailwind CSS
-
-### Backend
-
-* Node.js
-* Express.js
-
-### Database
-
-* MongoDB (with vector search)
-
-### AI / APIs
-
-* Embeddings API (e.g., Gemini / OpenAI)
-* Coin Gecko APIs
-* Crypto Panic APIs
+- **Frontend:** Next.js, React, Tailwind CSS  
+- **Backend:** Node.js, TypeScript  
+- **Database:** MongoDB (with vector capabilities)  
+- **AI & Data:** Embeddings APIs, CoinGecko, CryptoPanic
 
 ---
 
-## 📊 Data Model (Simplified)
+## 🚀 Quick Start
 
-* title
-* description
-* coin
-* date
-* embedding
-* priceBefore
-* priceAfter
-* priceChangePercent
-* source
-
----
-
-## 🚧 Limitations
-
-* Similarity is not always perfect
-* Market behavior is unpredictable
-* Results depend on data quality
-* System provides insights, not financial advice
-
----
-
-## 🔥 Future Improvements
-
-* Better event classification
-* More historical data
-* Confidence scoring system
-* User personalization
-
----
-
-## 🧪 Setup Instructions
-
-### 1. Clone the repo
-
-```
-git clone https://github.com/your-username/cryptoInsight.git
-```
-
-### 2. Install dependencies
-
-```
-cd client && npm install
-cd ../server && npm install
-```
-
-### 3. Setup environment variables
-
-Create `.env` file in server:
-
-```
-MONGO_URI=
-API_KEYS=
-```
-
-### 4. Run project
-
-```
-# backend
-cd server
+```bash
+npm install
 npm run dev
-
-# frontend
-cd client
-npm run dev
-
-# backend cmds
-npx tsx src/scripts/cron.ts   
-npx tsx src/scripts/migratePendingEmbeddings.ts  
 ```
 
----
-
-## 📌 Key Principle
-
-> We don’t predict the market. We show what happened in similar situations so users can think better.
+Open `http://localhost:3000` to view the app.
 
 ---
 
-## 📜 License
+## 📬 Connect
 
-This project is for educational purposes.
+- GitHub: [@Ahmad633440](https://github.com/Ahmad633440)
